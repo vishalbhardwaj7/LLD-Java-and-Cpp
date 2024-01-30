@@ -1,0 +1,157 @@
+// 1st question Design/
+// 2nd is how will you manage concurrency that two same tickets not get booked at a time 
+
+
+//Rough flow
+     Put location (City)
+User ->                  -> City will show all movies (Movie1,Movie2,Movie3)
+//User is intersted in movie 1
+//Now show him theatre wise shows
+//theatre1 (show 8,12,16 pm )
+//theatre2 (show 8,12,16 pm )
+//theatre3 (show 8,12,16 pm )
+//Now user selects the show of a particlur theatre
+//Clicks on in and now he sees seat selection
+//Booking(Payment snf Confirmation)
+
+
+//Objects
+
+1. User
+2. Movie
+3. City
+4. Theatre
+5. Screen (Halls)
+6. Show
+7. Booking
+8. Payment
+
+//We have always gone bottom up 
+//but now will form up to down approach as movie is the product so we will start from this
+
+
+//Movie Object
+class Movie{
+    int movieId;
+    String movieName;
+    int movieDurationInMinutes;
+    //getters and setters define here
+}
+
+class MovieController{ has->a Movie
+    Map<City,List<Movie>> cityVsMovies;
+    List<Movie> allMovies;//for easyness if just movie is to be found
+    //crud operations all
+}
+
+class Theatre{
+    int theatreId;
+    String address;
+    City city;
+    List<Screen> screens = new ArrayList<>(); has->a Screen
+    //according to flow after selection of movie, i need to show all the shows
+    //lets say some show is in screen1 and some is in screen2
+    //i dont care i need to show all shows for a theatre
+    List<Show> shows;// has->a Show
+}
+
+class Screen{
+    int id;
+    List<Seat> seats; has->a seat
+}
+
+class Show{
+    int showId;
+    Movie movie; has->a movie
+    Screen screen; has->a screen information
+    int startTime;
+    //lets say one screen is having 10 shows but booking a seat information is done by show
+    //thats why i have this list
+    List<int> bookedSeatIds ;
+}
+
+class Seat{
+    int id;
+    int price;
+    int row;
+    int col;
+    SeatCategory s;(enum Silver, Gold, Platinum)
+}
+
+// i have many theatres in one city so i need that info too
+// so we will make a theater controller
+class TheatreController{
+    Map <City,List<Theatre>> cityVsTheatre;
+    List<Theatre> allTheatres;//has->a Theatre
+}
+
+
+class Booking{
+    Show show;//has->a show
+    //lets say we book 5 seats
+    List<Seat> seats;
+    Payment payment; 
+}
+
+class Payment{
+    int paymentId;
+    Status status;(enum success and pending and fail whatever)
+}
+
+
+//driver app
+class BookMyShow{
+
+}
+
+
+
+//concurreny handling
+//Seat 1
+//User 1 and User 2
+//Both cant get same number
+//if user 1 select seat 1 and not pay for 10 mins till that time this seat can't be filled for 
+
+
+
+//2 type of concurrency handling
+1. optimistic -> (it allows multiple user to do the read , at the time of update it checks the version of object (lets say v1 of seat) so it checks if the version is still v1 so it will take lock change verison to v2 then release it. so when user2 will read it will see version2 so it wont be able to update)
+2. pessimistic -> whenever we read, lock that time only (if user 1 read only that time lock, so user 2 can't lock also. When update the release lock)
+
+
+//Which lock we will chose ?
+
+//When reading the seats if i lock it pessimistic then if traffic is more so all seats will get lock
+//optimistic is best way in this case
+
+//we will maintain a particular version of a Seat
+user 1    |    user 2
+  read v1 |    read v1
+          |    
+          |    
+          |    
+          |    
+          |    
+          |    
+          |    
+          |    
+          
+          seat update operation is in synchronized block
+          so only one can go in 
+          //if user 1 goes in, it checks that currently version is v1
+          //so it update and book it and update it to v2
+          //then release the lock
+          //now user 2 goes in
+          //it sees version is v2 (not v1)
+          //so can't update
+
+
+
+
+          //2nd issue is to solve timer problem
+          //so will use redis to give timer to  the lock. 
+          //so after this time it will automatically release
+          
+          
+          
+          

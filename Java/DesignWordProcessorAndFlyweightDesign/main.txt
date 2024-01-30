@@ -1,0 +1,281 @@
+// Flyweight design pattern. 
+1. It is one of the structural design patterns
+2. This pattern helps to reduce the memory usage by sharing data among multiple objects.
+3. Mostly when the interviewer asks that they have memory constraint or something, then this can be used
+
+// Lets see the issue for a Gaming scenario
+
+
+// Lets say I have to create so many robots or an army of robots
+
+// We create a simple class
+
+public class Robot{
+    int coordinateX;
+    int coordinateY;
+    String type;// human or dog
+    Sprites body;// small 2d bitmap(graphic element) (it represents an image or animation in computer graphics and it is a very heavy object)
+
+    Robot(int x,int y,String type,Sprites body) {
+        this.coordinateX=x; // position of robot
+        this.coordinateY=y;
+        this.type=type;
+        this.body=body;
+    }
+}
+
+public class Sprites{
+    (it represents an image or animation in computer graphics and it is a very heavy object)
+}
+
+
+
+// I want 5 lakh of human robots and 5 lakhs of robotic dogs
+
+main(){
+    int x=0,y=0;
+    for(int i=0;i<500000;i++){
+        Sprites humanoidSprite= new Sprite();
+        Robot humanoidRobotObject=new Robot(x+i,y+i,"HUMANOID",humanoidSprite);
+    }
+    for(int i=0;i<500000;i++){
+        Sprites roboticSprite= new Sprite();
+        Robot roboticDogObj=new Robot(x+i,y+i,"ROBOTIC_DOGS",roboticSprite);
+    }
+}
+1. So the loops run 500000 times creating the army
+2. Total 10 lakh objects will be created
+
+// one object takes how many space ?
+4+4+50+30000 = 31 KBytes
+
+for 10 lakh 
+31 gb memory .
+--     lets say interviewer say we have 20 gb memory only
+
+
+// how to solve it using Flyweight
+
+// when to use this pattern
+
+1. When memory is limited
+2. When objects used shared data (for all HUMANOID objects, so they look like same so same sprite is there(they gonna look the same) and type is same too)
+ a. Intrinsic data - Data shared among objects is intrinsic data (all 5 lakhs are sharing the sprite and type) . This remais same after beign defined
+ b. Extrinsic data - Changes based on client input and differs from one object to another (coordinateX and coordinateY)
+
+3. Creation of object is expensive (2d bitmap array is expensive here)
+
+
+// How to solve the issue ??
+
+1. From object, remove all Extrinsic data and keep only intrinsic data
+
+public class Robot{ // now it is a Flyweight object as it only have intrinsic data . Also this class is immutable now
+    String type;// human or dog
+    Sprites body;// small 2d bitmap(graphic element) (it represents an image or animation in computer graphics and it is a very heavy object)
+
+    Robot(int x,int y,String type,Sprites body) {
+        this.coordinateX=x; // position of robot
+        this.coordinateY=y;
+        this.type=type;
+        this.body=body;
+    }
+    // define only getter methods and no setter methods so it becomes immutable
+}
+
+2. Extrinsic data can be passed to the Flyweight class in method parameter
+3. Once the Flyweight object is created, it is cached and reused whenever required
+
+
+public interface IRobot{
+    public void display(int x,int y);
+}
+
+
+// flywight classes 
+public class HumanoidRobot implements IRobot{
+    private String type;
+    private Sprites body;
+
+    HumanoidRobot(String type, Sprites body){
+        this.type = type;// only can be initialized in constructor
+        this.body = body;
+    }
+
+    public String getType(){// only getters are defined
+        return type;
+    }
+
+    public String getBody(){
+        return body;
+    }
+
+    @override
+    public void display(int x, int y){
+        // use the humanoid sprites object;
+        // and x and y coordinates to render the shape
+    }
+}
+
+
+public class RoboticDog implements IRobot{ // concrete classes 
+    private String type;
+    private Sprites body;
+
+    HumanoidRobot(String type, Sprites body){
+        this.type = type;// only can be initialized in constructor
+        this.body = body;
+    }
+
+    public String getType(){// only getters are defined
+        return type;
+    }
+
+    public String getBody(){
+        return body;
+    }
+
+    @override
+    public void display(int x, int y){
+        // use the robotic dog sprites object;
+        // and x and y coordinates to render the shape
+    }
+}
+
+
+// How to cache it also >>>>>>>??????
+
+// build a factory 
+
+public class RoboticFactory{ // it does the caching
+    private static Map<String,IRobot> roboticObjectCache = new Heahsmap<>(); type -> Irobot object
+
+    public static Irobot createRobot(String robotType){
+        if(roboticObjectCache.containsKey(robotType)){
+            return roboticObjectCache.get(robotType);
+        }
+        else {
+            if(type==HUMANOID){
+                Sprited humanoidSprite=new Sprites();
+                Ibot humanoidObject = new HumanoidRobot(type,humanoidSprite);
+                //cache.put(type,humanoidObject)
+                return humanoidObject;
+            }
+            else if(type==ROBOTITCDOG){
+                //same here too
+            }
+        }
+    }
+    return null;
+}
+
+// how it is used at client side ???????
+
+main(){
+    Irobot humanoidObject1= RoboticFactory.createRobot("HUMANOID");
+    humanoidObject1.display(1,2);
+    Irobot humanoidObject2= RoboticFactory.createRobot("HUMANOID"); // it returns the same object basically i am sharing the data
+    humanoidObject2.display(2,3);
+    Irobot robotob= RoboticFactory.createRobot("ROBOTICDOG");
+    robotob.display(1,2);
+    Irobot robotob2= RoboticFactory.createRobot("HUMANOID"); // it returns the same object basically i am sharing the data
+    robotob2.display(2,3);
+}
+
+
+// Word processor example .............
+
+
+public class Character{
+    char character;
+    String fontType;
+    int size;
+    int row;
+    int columm;
+
+    Character(char character, String fontType,int size, int row, int column){
+        this.character = character;
+        this.fontType = fontType;
+        .......... so on
+    }
+
+
+    // getters and setters
+}
+
+main(){
+    /*
+        this is the data we need to type in the word processor..................
+        .............
+        ............
+        .........
+        ..........
+        ..........
+        ..........
+
+        Total = 58 characters
+        t=7 times
+        h=3 times
+        a=3 times and so on...........
+    */
+                                                     r, c
+    character object1=new Character('t',"ARIAL", 10, 0, 0);
+    character object1=new Character('h',"ARIAL", 10, 0, 1);
+    character object1=new Character('i',"ARIAL", 10, 0, 2);
+    character object1=new Character('s',"ARIAL", 10, 0, 3);
+
+}
+
+// problem >>>>>??????
+// all t's exacly looks the same and also the size remains same and also the fofnt is same righttttt
+
+// lets say we have doc with lakhs of characters. so this is a memory issue
+
+
+
+
+
+// fixed using flywight design pattern
+
+public interface ILetter{
+    public void display(int row, int columm);
+}
+
+public class DocumentCharacter implements ILetter{
+    private char character;// all intrinsic data
+    private String fontType;
+    private int size;
+
+    DocumentCharacter(char character, String fontType, int size){
+        this.character = character;
+        this.fontType = fontType;
+        this.size = size;
+    }
+
+    @override 
+    display(int x,int y){
+        .... display logic
+    }
+}
+
+// factory for caching
+
+
+public class LetterFactory{
+    private static Map<Character,ILetter> cache= new Hashmap;
+    public static ILetter createLetter(char charValue){
+        if(contains)return same obj;
+
+        else make a new DocumentCharacter obj;
+        characterCache.put(obj);
+        return obj;
+    }
+}
+
+main(){
+    ILetter obj1= LetterFactory.createLetter('t');
+    object1.display(0,0);
+    ILetter obj2= LetterFactory.createLetter('z');
+    object2.display(0,6);
+}
+

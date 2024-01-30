@@ -1,0 +1,208 @@
+// Definition - Bridge pattern decouples an abstraction from its implementation so that two can vary independently
+
+/ problem 
+
+public abstract class LivingThings{
+    abstract public void breatheProcess();
+}
+
+public class Dog extends LivingThings{
+    @Override
+    public void breatheProcess(){
+        //Breather through nose
+        //Inhale oxygen from air
+        //Exhale carbon dioxide
+    }
+}
+
+public class Fish extends LivingThings{
+    @Override
+    public void breatheProcess(){
+        //Breather through Gills
+        //Inhale oxygen from Water
+        //Exhale carbon dioxide
+    }
+}
+
+public class Tree extends LivingThings{
+    @Override
+    public void breatheProcess(){
+        //Breather through nose
+        //Inhale oxygen from air
+        //Exhale Oxygen through PhotoSynthesis
+    }
+}
+
+// what is the problem in this code ???
+
+// I want to introduce new Breathing process for Bird
+// it inhale through Beak
+// so its a different process
+
+
+// So I can't add another breathe process as it is tightly coupled with abstraction
+
+// i need to add another class bird and then i can add another breathe process
+
+// problem is i need to enter a breathing process so its a totally different process 
+
+
+// uml of this design pattern
+
+
+                          has-a
+Abstraction        --------------------->   Implementor
+Implementor obj                           implementationMethod()
+Function()  
+
+
+|               |                           |                             |
+|               |                           |                             |                 
+|               |                           |                             | 
+|               |                           |                             | 
+|               |                           |                             | 
+|               |                           |                             | 
+|               |                           |                             | 
+Refined       Obj.implementationMethod()  ConcreteImplementor          Many more implementor
+Abstraction                               implementationMethod()
+
+
+
+
+
+
+
+
+
+
+// Code wise implementation .......
+
+
+
+public abstract class LivingThings{
+    
+    BreatheImplementor breatheImplementor;
+
+    public LivingThings(BreatheImplementor breatheImplementor){
+        this.breatheImplementor=breatheImplementor;
+    }
+
+    abstract public void breatheProcess();
+}
+
+
+public class Dog extends LivingThings{
+    public Dog(BreatheImplementor breatheImplementor){// so here i am dynamically providing the breatheImplementor to my parent
+        super(breatheImplementor);
+    }
+    @Override
+    public void breatheProcess(){
+        breatheImplementor.breathe();
+    }
+}
+
+public class Fish extends LivingThings{
+    public Fish(BreatheImplementor breatheImplementor){
+        super(breatheImplementor);
+    }
+    @Override
+    public void breatheProcess(){
+        breatheImplementor.breathe();
+    }
+}
+
+public class Tree extends LivingThings{
+    public Fish(BreatheImplementor breatheImplementor){
+        super(breatheImplementor);
+    }
+    @Override
+    public void breatheProcess(){
+        breatheImplementor.breathe();
+    }/Exhale Oxygen through PhotoSynthesis
+}
+
+
+
+
+// implementor's implementation
+
+class BreatheImplementor{
+    public void breathe
+}
+
+public class TreeBreathImplementation implements BreatheImplementor{
+    @Override
+    public void breathe(){
+        //brether through leaves..
+        /......
+    }
+}
+
+.. same for other two
+
+// i can add more
+
+
+
+
+
+
+
+
+
+
+
+// how will client invoke this ?????????????????
+
+LivingThings fishObject = new Fish(new WaterBreatheImplementation());
+fishObject.breatheProcess();
+// in the runtime i can give new logic to fish also
+
+// so abstractor and implementor can vary independently this is problem which is solved
+
+
+
+// different from strategy pattern 
+
+// how ??????????
+
+
+
+BreathingStrategy<<Interface>>       <<------------------------ Context class has strategy obj; <<<<<<------ client using this class
+   breathe()                                                      it will call the obj.breathe()
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+|          |          | 
+Tree     Fish       Land etc...
+breathe() breathe()
+// now what is different as it looks very similar
+
+
+
+// difference is only in intent
+
+
+
+
+///  intent of strategy pattern is to change the behavior of context object in runtime 
+//  lets say living thing obj=new livingThing(....cons of breatheStrateg )// so this object can be changed in behavior in runtime
+
+
+// what is intent of bridge pattern
+
+.. lets say context class is grown and become abstract so both implementation and context should grow independently
+
+// so bridge pattern varies in logic that both remain separate
+
+
+// but coding and ums is relatively same

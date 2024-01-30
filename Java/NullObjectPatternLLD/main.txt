@@ -1,0 +1,64 @@
+private static void getVehicleDetails(Vehicle vehicle){
+    System.out.println("Seating capacity is" + vehicle.getSeatingCapacity());
+}
+// is this code right ????
+// No
+// It will throw null pointer exception if the null object is passed
+
+// how to correct this code ?
+// put an if condition 
+
+private static void getVehicleDetails(Vehicle vehicle){
+    if(vehicle!=null)
+        System.out.println("Seating capacity is" + vehicle.getSeatingCapacity());
+}
+//but this is a problem so if we have thousands of methods in app we cant do this again and again
+// so we need to generalize this
+// we need to avoid this null check everywhere because they are unnecessary
+
+ 
+// Here comes NULL OBJECT DESIGN PATTERN
+1. A null object replaces NULL return type; // we wont return null but a NULL object
+2. No need to put if check for putting NULL
+3. Null Object reflects do nothing or defaul behaviour // if we do a method getSeatingCapacity on a null object it will either do nothing or do a default behaviour
+
+
+
+
+
+UML of NULL Object Design Pattern
+
+Client -> abstract Object(method()) 
+           |           |
+           |           |
+           |           |
+           |           |
+           |           |
+           |           |
+           |           |
+           |           |
+        Real          Null 
+        Object        Object
+        (method())   (method())
+
+For eg - 
+
+ Client ->          Vehicle() 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               | 
+           |           |               |             
+    (is-a) Car         Bike (is-a)   Null (is->a)
+        Object        Object          Object
+
+

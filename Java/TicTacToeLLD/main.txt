@@ -1,0 +1,133 @@
+//2 Players
+//3*3 matrix
+//if same piece in any row or column he wins
+
+//objects
+1. Piece (X,O,^, $)//extensible code for other symbols
+2. Board (n*m) extensible
+3. Player
+
+
+Enum PieceType{
+    X,O;
+}
+class PlayingPiece{
+    PieceType type;
+    PlayingPiece(PieceType t);//assign type as PieceType
+}
+class PlayingPieceX extends PlayingPiece{ is->a PlayingPiece
+    const(){assign the type super(placetype.X)}
+}
+class PlayingPieceO{ is->a PlayingPiece
+    const(){assign the type super(placetype.O)}
+}
+
+//board
+
+class Board{
+    int size;
+    PlayingPiece [][] board;//has -> a pieces
+    public Board(int size){
+        this.size=size;
+        board= new PlayingPiece[size][size];
+    }
+    //get free cells 
+    (){
+        iterate over all cells and return a list of pairs of all available empty cells or null cells
+    }
+    //printBoard function
+    {
+        printing the current board
+    }
+    //bool addPiece{
+        try to add the piece successfully.............
+    }
+}
+
+Player{
+    string Name;
+    PlayingPiece piece;X or O or....
+    Player(name,piece){
+        name=name;
+        picie=pice;
+    }
+
+
+}
+
+
+class TicTacToeGame{
+    Deque<Player> players; has->a players
+    Board gameBoard;//board is needed
+    TicTacToeGame(){//consructor
+        initializeGame();
+    }
+
+    public void initializeGame(){
+        //creating 2 players
+        players= new LinkedList<>();
+        //we can make users dynamic too its our choice
+        PlayingPieceX crossPiece = new PlayingPieceX();
+        Player player1 = new Player(name:"Player1", crossPiece);
+        PlayingPieceO crossPiece = new PlayingPieceO();
+        Player player2 = new Player(name:"Player2", zeroPiece);
+
+        players.add(player1);
+        players.add(player2);
+
+        //initializeBoard;
+        gameBoard= new Board(size:3);
+    }
+
+    public string startGame(){
+        bool noWinner=true;
+        
+        while(noWinner){
+            //take out player from queue\
+            Player playerTurn = players.removeFirst();
+            gameBoard.printBoard();
+            List<Pair<integer,integer>> freeSpaces = gameBoard.getFreeCells();
+            if(freeSpaces.isEmpty()){
+                noWinner=false;
+                continue;
+            }
+
+            //read user input
+            println(playerTurn.name + "enter row and column please")
+            cin>>row>>col;
+
+            //place the piece successfully
+
+            bool isAddedSuccessfully = gameBoard.addPiece(row,col,playerTurn.PlayingPiece);
+
+            if(!isAddedSuccessfully){
+                //player cannnot insert the piece at this position
+                System.out.println("incorrent position,try gain");
+                players.addFirst(playerTurn);//insert him again at first
+                continue;//run loop again
+            }
+            player.addLast(playerTurn);
+
+            bool winner = isThereWinner(row,col,playerTurn.PlayingPiece.pieceType);
+            if(winner)return playerTurn.name;
+        }
+
+        return "tie";
+    }
+
+    public boolean isThereWinner(int row,int col,PieceType piece){
+        //check row //check col and //check diagonal like n queens
+        return true or false;
+    }
+
+}
+
+
+
+
+
+
+public main(){
+    TicTacToeGame game = new TicTacToeGame();
+    System.out.println("game winner is " + game.startGame());
+}

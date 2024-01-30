@@ -1,0 +1,316 @@
+// what is the app ?
+// add an expense and then split between 4 friends like 100 me, 100 f1, 100 f2, 100 f3
+// it also helps us to maintain a balance sheet like to which friend how much is given and owed like that
+
+// 1st step - Requirement analysis
+
+// Make a happy flow
+
+// I downloaded the app, 
+2. I can add my friends f1, f2, f3...
+3. Now I can make groups like college group, Home group, school etc.
+4. Now I can add friends to a particular group like f1, f3 to g1 etc
+5. Now I can add an expense either from groups or even from directly friends 
+6. Then I can split between f1,f2etc.
+
+Requirements - 
+1. Add friends capability
+2. Add/Manage group
+3. Add/Manage frieds inside a group
+4. Manage Expenses inside a group/ without a group
+5. I should be able to split the expenses -> Equal Split, Unequal Split, PercentageWise Split (Ask the interviewer if he needs these capabilities)
+6. Balance Sheet of each user 
+
+Step 2 - Object identification
+
+1. SPLITWISE 
+2. User
+3. Group
+4. Expense
+5. Split ??
+6. BalanceSheet
+
+
+// Lets see how splitwise works
+
+// What happens when we create an expense
+// Lets say I created an expense 
+                                Lunch.
+                                Paid by - Vishal
+                                Amount - 400
+                                Now I want to split we have 3 types of split, I want to split equally
+            Split Equally       |_ friend1       100
+                                |_ friend2       100
+                                |_ friend3       100
+                                |_ vishal(me)    100
+
+            Now this was alll UI info now we have createExpenseAPI which will receive all this info
+
+// BalanceSheet 
+
+// Vishal(my view)
+Total Amount Owed/GetBack (Either I am in positive or negative)
+
+Vishal Owe/GetBack f1 - 100
+Vishal Owe         f2 - 100
+Vishal Owe         f3 - 100
+.......
+
+
+// UML Diagram of SplitWise
+
+// Bottom Up Approach
+
+// Expense{ -- Dumb Object
+    String id;
+    String description;
+    double amount;
+    User paidBy;// who paid this
+    SplitType splittype;
+    List<Split> splits;// It has splits, It has-a user class too
+}
+
+enum SplitType{
+    EQUAL,UNEQUAL,PERCANTAGE;
+}
+
+class Split{
+    User user;
+    double amount;
+    int percentage;// if I want client to directly send me percentage then i can keep this variable else if i want to him to first calculate then send also its ok then
+}
+
+
+class ExpenseController{//use to create, update an expense -- vv imp has-a expense
+    //creating an expense
+    createExpenseMethod(amount, paidBy, splits, splitType);
+}
+//whenever somebody is calling expense controller. Hey create an expense for me. Now we know expense can be created from two places . 
+1. from a group.
+2. directly from friends.
+
+
+// ExpenseController gets all info and based on split type it has
+// <<ExpenseSplit>> interface
+       (Validate Request)
+     |         |            |
+     Equal    Unequal      Percentage Split
+
+
+// after receive all info for create expense method, expense controller will go to ExpenseSplit using a factory pattern Split Factory based on a type of split it will get the object acc to it
+// Now expense controller got it and now will validate the request acc to it
+// Now lets say split factory gave me unequal object so it will cal that function and say the total was 700 but friends were 100 200 300 only so it will say it is just 600 not ok
+
+//  now lets come to user
+
+class User{
+    int id;
+    string name;
+    UserExpenseBalanceSheet userExpenseBalanceSheet;// has-a BalanceSheet
+}
+
+// each user will maintain its balance sheet
+// there can be many users in system
+
+// We need a user controller and it will perform the crud operations
+
+class UserController{
+    List<User> list;
+    // crud
+}
+
+SPLITWISE App{
+    UserController;//has
+    GroupController;//has
+    splitewise app will just call the controller and ask to take care of all the operations of crud on groups i dont care
+}
+
+class Group{
+    String id;
+    string name;
+    List<User> userList; 
+    // It also has list of expenses
+    List<Expense> expList;
+    // Also to create an expense it has A
+    ExpenseController;
+}
+
+// Now there can be many groups
+// So we need a group controller
+
+
+public class UserExpenseBalanceSheet{
+    // i have user vs balance
+    // Map<User,Balance> friendBalanceSheet; each user has this whole map with his friends;
+    double totalMyExpenses;
+    double totalPayment;
+    double totalOwe;
+    double totalGetBack;// for drilldown i can got to friendBalanceSheet
+}
+
+class Balance{
+    double amountOwe, amountGetBack;
+}
+
+// how will you update this balance sheet ? 
+// as soon as we create an expense, it should be able to update this balance sheet right ?
+
+// ExpenseController controller should take the responsibility that as soon as it creates the expense
+// it will update the balance sheet of the users
+
+
+
+class BalanceSheetController{
+
+}
+
+// Lets say U1 paid 500 and split equally between u1 and u2
+// Now ExpenseController calls the BalanceSheetController controller and it will update balance sheets of the users according to custom logic
+
+
+
+// Follow up question
+// To simplyfy the expenses we can use graph...........................
+
+
+
+
+Q2 // Splitwise Simplify Debt Algorithm 
+    // First watch the first part please 
+
+// This has been recently asked in a top product company 
+// both lld and dsa perspective
+
+// Lets say there are three persons living in an apartment
+
+// Lets see there are arrays given
+ [from, to, amount]
+ [A,B, 5]
+ [B,C, 5]
+ [C,A, 10]
+ [A,C, 1]
+
+// main purpose of the splitwise Simplify is to reduce the number of transactions always 
+// But after the simplification the amount they owe or receive should not differ
+
+// Graph of above data 
+
+    1
+  ---->
+   10
+ A<---C
+ |    ^
+ |    |5
+ |    |
+ 5--->B
+
+
+//Now just from a human perspective we can say B has to take from A and then give to C. So we cut B out and ask A to give directly to C 
+// Now our graph looks like this
+        1
+A ----------------> C
+       10
+  <----------------
+        5
+  ---------------->
+   
+// now lets plus minus and only c has to give 4 rs
+
+          4
+// A <------------- c
+
+
+//But how will the splitwise do it internally ????
+
+// splitwise will compute in-out of each node
+// for a -> 10-(5+1) = 4 so it means A needs 4
+
+// for b -> 5-5 = 0 so no need
+// for c -> (1+5)-10 = -4 so it needs to give the money
+
+
+// now what do we notice from all this 
+
+// 1. so the amount of all the values will be equal to 0 (bcs system is not creating any new money)
+
+// 2. those who are 0 are not contributing  so not required so members with 0 are not required
+
+// 3. If we just know in-out of all nodes, we dont even need to remember the graph itself
+
+receivers | giver
+ 70       | -200
+ 300      | -40
+          | -100           sum of all should be 0 always
+          | -30
+
+        
+now have a balance list
+[70,-200,300,-40,-100,-30]
+
+// one more thing. split wise says lets not give any partial amounts because that will just increase the number
+// of transactions rather just give full amount always
+// give full -200 to 70 so it becomes -130 now it has to pay 130 so it becomes a giver so on ....
+// so basically giver after giving money will become 0 always but to whomever it gives money its balance will change i.e it can  become a giver or remain a receiver
+
+// after the balance list it becomes a dfs problem
+
+// now lets iterate from 70 and give to -200 so it becomes -130 and -200 becomes 0
+// or there can be other possibilities too so what if 70 is paid by -40
+// so basically any time a transaction happen, you need to make one 0 and others will change accordingly
+
+// so basically it is a recursion so wherever the transaction count is less we will pick that particular path 
+
+// this is a np hard problem 
+
+// what is input 
+// we will be given an array of transactions [][] like aboe [a,b,amonut]
+// so then, what we would need to do is coding part
+
+
+public int dfs(vector<int> &balances,int currentIdx){
+    if(balances.size()==0 || currentIdx>=balances.size())return 0;
+    int currentVal = balances[currentIdx];
+
+    int minTransactionCount=1e9;
+
+    //i need to find a opposite sign number from idx+1
+
+    for(int i=currentIdx+1;i<balances.soze();i++){
+        int nextVal=balances[i];
+        //transaction can only happen if the sign is a opposite one right
+        if(currentVal*nextVal < 0){//transaction can happen between these
+            balance[i]=currentVal+nextVal;//just add the cur bal into it so it changes
+            minTransactionCount = min(minTransactionCount,1+dfs(balances,currentIdx+1));
+            balance[i]=nextVal;//set again
+            //if i get a perfect match lets say 40 for a -40 so no need to go ahead just use that
+            if(currentVal+nextVal==0){
+                break;
+            }
+        }
+    }
+
+    return minTransactionCount;
+}
+
+void main(int [][] transactions){
+    //compute the overall balance (incoming-outgoing) for each members
+    unordered_map<int,int> membersVsBalanceMap;
+    for(auto vec:transactions){
+        int from=txn[0];
+        int to=txn[1];
+        int amount=txn[2];
+        membersVsBalanceMap[from]-=amount;
+        membersVsBalanceMap[to]+=amount;
+    }
+
+    //put into a balance list
+    vector<int> balance;
+    for(auto it:membersVsBalanceMap){
+        if(it.second!=0)balance.push_back(it.second);
+    }
+
+    //now write our dfs code bro
+
+}
+
+T.C -> O(n!)

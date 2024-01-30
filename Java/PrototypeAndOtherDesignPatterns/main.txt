@@ -1,0 +1,359 @@
+What are creational design patterns ? 
+These patterns responsibility is to create objects/ control the creation of objects
+
+
+
+// 1. Prototype design pattern - Most used design pattern
+It is used when we have to make a copy/clone from existing object.(when we just need to do minor modifications)
+
+llets say i have a robot and i need to make a clone and do some changes..
+
+
+// i created already a student class. 
+class Student{
+id,roll, 
+private name;
+//const
+
+//default cons.
+}
+
+// client
+
+i make a new object
+Sdutent obj= new Student(30,40,vishal);
+Student clone = new Student();
+clone.roll=obj.roll
+...
+etc
+
+//can't set the private name of this object now because it is private
+
+// this is a problem
+
+// no way to access that of obj
+
+// what if student has 100 fields and only 98 should be filled and 2 can be left. so how will clone know this.
+// this is another issue
+
+
+
+// how prototype resolved this ?
+
+
+
+// cloning should be responsibility of not the cleitn
+
+
+client
+|
+|
+|
+|
+|
+|
+|
+prototype<<interface>> clone()
+|           |
+|           |
+|           |
+|           |
+|           |
+|           |
+class 1     class 2
+clone()     clone()
+student      employee
+
+
+
+// so in future you can just use the clone method of all the classes for cloning and it will also have access to all the private members too. it will take some params and then do the needful
+
+
+
+public class Prototype{
+    Prototype clone();
+}
+
+public class Student implements Prototype{
+    int age;
+    private int rollNumber;
+    String name;
+    Student(){
+
+    }
+    Student(int name,age,roll){
+        //assign
+    }
+    @Override
+    public Prototype clone(){
+        return new Student(age,rollNumber,name);//so it gives the already assigned values by default
+    }
+}
+
+main(){
+    Student obj=new Student(20,75,vishal);
+    Student cloneObj= (Student) obj.clone();
+}
+
+// so client does not need to worry of all the parameters
+
+
+// other patterns
+
+
+
+
+
+
+
+
+----------------------------
+Singleton pattern
+
+// it is used when we have to create only 1 instance of the class
+//for eg making a db connnection
+
+4 ways to achieve this
+
+1. eager
+2. lazy
+3. synchronized method
+4. double locking (actually used in the industry)
+
+
+
+1. eager initialization
+
+
+public class DBCOnnecetion{
+    private static DBCOnnecetion conObject=new DBCOnnecetion();// when class will load the static object will be initialized in starting only
+    private DBCOnnecetion(){//restricting the constructor so that it cant be used outside of class
+
+    }
+    public static DBConnection getInstance(){//made static so it can be called by class name and it is only related to class only and shared by all objects 
+        return conObject;
+    }
+}
+
+public class Main{
+    public static void main(){
+        DBCOnnecetion connObject = DBConnection.getInstance
+    }
+}
+
+-------
+Lazy initialization 
+public class DBCOnnecetion{
+    private static DBCOnnecetion connObjecy=null;
+    private DBCOnnecetion(){//restricting the constructor so that it cant be used outside of class
+
+    }
+    public static DBConnection getInstance(){//made static so it can be called by class name and it is only related to class only and shared by all objects 
+    if(connObject==null){
+        connObject=new DBConnection();
+    }
+        return conObject;
+    }
+}
+
+//problem ? 
+two threads calling the getInstance at same time can create two connnection at samew time
+
+------------
+synchronized method
+
+public class DBCOnnecetion{
+    private static DBCOnnecetion connObjecy=null;
+    private DBCOnnecetion(){//restricting the constructor so that it cant be used outside of class
+
+    }
+    // put synchronized so it use a lock so two threads goes in only one will go at a time
+    synchronized public static DBConnection getInstance(){//made static so it can be called by class name and it is only related to class only and shared by all objects 
+    if(connObject==null){
+        connObject=new DBConnection();
+    }
+        return conObject;
+    }
+}
+
+// problem??
+// it is very expensive so 1000 requests coming so it will lock a lottttttttt
+
+---------------
+double locking 
+public class DBCOnnecetion{
+    private static DBCOnnecetion connObjecy=null;
+    private DBCOnnecetion(){//restricting the constructor so that it cant be used outside of class
+
+    }
+    // put synchronized so it use a lock so two threads goes in only one will go at a time
+    public static DBConnection getInstance(){//made static so it can be called by class name and it is only related to class only and shared by all objects 
+        if(connObject==null){
+            synchronized (DBCOnnecetion.class){
+                if(connObject==null){//t2 will not enter this condition
+                    connObject=new DBCOnnecetion();
+                }
+            }    
+        }
+        return conObject;
+    }
+}
+
+------------------------
+Factory pattern
+when all the object creation and its business logic we need to keep at one place
+                                  creates obj of
+Client ------------> ShapeFactory ---------------> Shape 
+                                                   | | |
+                                                   | | |
+                                                   | | |
+                                                   | | |  
+                                                 Circle Rect Sq
+
+//if i need to change logci in any class i can do it in that class only so one place at a time
+
+public interface Shape(){
+    public void computeArea();
+}
+
+public class Square implements Shape{
+// will implements computeArea Function
+}
+public class rect implements Shape{
+// will implements computeArea Function
+}
+public class circle implements Shape{
+// will implements computeArea Function
+}
+
+public class ShapeInstanceFactory{//takes the responsibility of creating the object
+// takes a string and on the basis of that return the req shape object
+   public Shape getShapeInstance(String value){
+    case match on value and return required object, circle, rect or sq
+   }//in future it will be benficial to change this logic only at one plce
+}
+
+// client {
+    it has a shape factory object 
+    //create shape factory object
+    circle obj = shapefactoryobj.getShapeIntsance('circle')
+}
+
+
+
+
+
+
+--------------------------------
+abstract factory pattern
+
+// it is a factory of a factory.........
+
+
+client ->>>>>> abstract producer
+                    |
+                    |
+                    |
+                    |
+            abstract factory
+                  |
+                  |
+                  |
+                 >|<-----------------------
+             ^                            ^
+economic car factory                   luxury car factory
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+|                                               |
+-------------------------------------------------
+                          |
+                          |
+                          |
+                          |
+                          |
+                          |
+                          car
+                          |
+                          |
+       ------------------------------------------
+       |          |         |           |       |                    
+       |          |         |           |       |                    
+       |          |         |           |       |
+       economic economic    luxury     luxury   ......etc
+       car1      car2       car1       car2
+
+public class abstractProducer{
+    // case matches on the string and give the required factory object whether it is economic or luxury you want
+    return type is abstract factory of this Function
+
+}
+
+public interface AbstractFactory{
+    public Car getInstance(int price);
+}
+
+
+public class economicFactory implements AbstractFactory{
+    //on basis of price it return economic car1 or economic car2
+}
+public class economicFactory implements AbstractFactory{
+    //on basis of price it return luxyry car1 or luxry  car2
+}
+
+
+//interface of car
+// now luxry1 2 etc......... implementing those interfaces
+
+
+
+//client side
+AbstractFactoryProducer producerObj= new AbstractFactoryProducer;
+AbstractFactory abstractfactoryobj = producerObj.getFactoryInstance('Premium');
+Car car= abstractfactoryobj.getInstance(5000000);;//on basis of that the obj will be returned
+
+
+
+-------------------------------
+builder pattern
+// when we need to create an object step by step
+
+
+                                       director
+                                       |
+                                       |
+                                       |
+                                       |
+                                       |
+                                       |
+ (AbstractHomeBuilder createWalls())   abstract homebuilder ---------------> Homoe(actual obj which we need to build)
+ (AbstractHomeBuilder createRoof())
+ (AbstractHomeBuilder createDoors())    
+ (AbstractHomeBuilder createWindows())           
+ Home build();                      
+                                    |            |
+                                    |            |
+                                    |            |
+                                    |            |
+                                    |            |
+                                    |            |
+                                    Flat        Duplex
+                                    homebuilder homebuilder
+
+
+// it creates in steps and then ultimately it is done
+
+// so also lets see if 2 3 steps are same for some but step 4 is diff for duplex or flat so they can override the behavior
+
+
+
+// director's role is to orchestrate the steps maybe some time step 1 and then 2 is done but sometime 2 is done getFactoryInstance
+
+
+
+// see the example for clarification above

@@ -1,0 +1,232 @@
+//rough flow
+ --------------------
+|                    |
+|    snakes          |
+|       player       |
+|                    |
+|     snakes         |
+|                    |
+|      laddersplayer |
+|                    |
+|        ladders     |
+|                    |
+|                    |
+ --------------------
+//requirement clarification
+Q1.  how many dices ?
+Ans. 1, but should be scalable
+
+Q2. How many snakes and ladders we want ?
+Ans. at setup time, we should be able to dynamically define the number
+
+Q3. Winning condition?
+Ans. For this, anyone wins, game finish
+
+//object identification
+1. dice
+2. snake,ladder
+3. Board
+4. Players
+5. Cells ? Will discuss later why are we using this
+
+
+// LLD implementation now
+
+Bottom up approach
+
+public class Player{
+    String id;
+    int currentPosition;
+    cons(String id,int currPos){
+        this.id=id;
+        this.currentPosition=currPos;
+    }
+    //getters and setters
+}
+
+//dice object for now we are making for one only
+public class Dice{
+    int diceCount;
+    int min=1,max=6;
+    public Dice(int diceCount){
+        this.diceCount=diceCount
+    }
+    public int rollDice(){
+        int totalSum=0;
+        int diceUsed=0;//this is for if I am using more than one dice, i can set diceCount in cons and 
+        //find total sum after rolling all dices
+        while(diceUsed<diceCount){
+            totalSum+=random.current().nextInt(min,max+1);//get a random number between max and min
+            diceUsed++;//increment the value
+        }
+        return totalSum;
+    }
+}
+
+//now for snake and ladder are actually same as they are taking from some start to end its just the values are 
+//differently behaving in both cases
+
+//we will take a class Jump
+//it represents snake and ladder
+
+(Snake,Ladder)
+
+public class Jump{
+    int st,end;
+    //getters and setters
+}
+
+
+//Cell // so basically a cell would be defined by indexes only so no need to keep that just have the st and end also end is more imp st is redundant
+public class Cell{ --> has-a with Jump
+    Jump jump;
+    //getters and setters
+}
+
+//Board
+has-> a with Cells
+//we will take a 2d array of Cells
+
+public class Board{
+    Cell[][] cells;
+    
+    Board(int boardSize,int numberOfSnakes,int numberOfLadders){
+        intializeCells(boardSize);
+        addSnakesLadders(cells,numberOfSnakes,numberOfLadders);
+    }
+
+    private void intializeCells(int boardSize){
+        cells= new Cell[boardSize][boardSize];
+        for(int i=0;i<boardSize;i++){
+            for(int j=0;j<boardSize;j++){
+                Cell cellObj=new Cell();//make a new cell
+                cells[i][j]=cellObj;
+            }
+        }
+    }
+    
+    private void addSnakesLadders(Cell[][] cells,int numberOfSnakes, int numberOfLadders){
+        while(numberOfSnakes>0){
+            int snakeHead=random(1,cells.length*cells.length-1);
+            int snakeTail=random(1,cells.length*cells.length-1);
+
+            if(snakeTail>=snakeHead)
+                continue;
+
+            Jump snakeObj  = new Jump();
+            snakeObj.start = snakeHead;
+            snakeObj.end=snakeTail;
+
+            Cell cell = getCell(snakeHead);//get the snake head from the cell
+            //we can define a get cell by head%length to get row and col
+            cell.jump = snakeObj;//assign jump obj to that cell
+
+            numberOfSnakes--;//one snake is placed
+        }
+
+        while(numberOfLadders>0){
+            int ladderStart=random(1,cells.length*cells.length-1);
+            int ladderEnd=random(1,cells.length*cells.length-1);
+
+            if(ladderStart>=ladderEnd)
+                continue;
+
+            Jump snakeObj  = new Jump();
+            snakeObj.start = ladderStart;
+            snakeObj.end=ladderEnd;
+
+            Cell cell = getCell(ladderStart);//get the snake head from the cell
+            //we can define a get cell by head%length to get row and col
+            cell.jump = snakeObj;//assign jump obj to that cell
+            
+            numberOfLadders--;//one snake is placed
+        }
+
+    }
+
+    private Cell getCell(int pos){
+        int row=pos/cell.s.length();
+        int col=pos%cells.kength();
+        return cells[row][col];
+    }
+}
+
+
+//game class has->a board has-> dice has->a player
+Board board;
+Dice dice;
+Deque <Player> playerList;
+
+public class Game{
+    Board board;
+    Dice dice;
+    Deque<Player>playerList=new LinkedList<>();//if p1 is turn for put it from front and emplace is back so it becomes easy
+    Player winner;
+
+    public Game(){
+        initializeGame();
+    }
+
+    private void initializeGame(){
+        board= new Board(boardSize:10, numberOfSnakes:5, numberOfLadders:4);//make a 10by10 matrix game
+        dice=new Dice(diceCount:1);
+        winner=NULL;
+        addPlayers();
+    }
+
+    private void addPlayers(){
+        Player p1=new Player(id:"p1",currentPosition:0);
+        Player p2=new Player(id:"p2",currentPosition:0);
+        playerList.add(p1);
+        playerList.add(p2);
+    }
+
+    public void startGame(){
+        while(winner!=null){
+            //check whose turn now
+            Player playerTurn=findPlayerTurn();
+            System.out.println("player turn is"|"current position is" playerTurn.id is "");
+
+            //roll dice
+            int diceNumbers=dice.rollDice();
+
+            //get new position
+
+            int playerNewPosition=currentPosition+diceNumbers;
+            playerNewPosition=jumpCheck(playerNewPosition);//check if it is jump cell
+            playerTurn.currentPosition=playerNewPosition;
+
+            println("id is "/+ ""print ther new position here)
+
+            if(playerNewPosition>=board.cells.length*board.cells.length-1){
+                winner=playerTurn;
+            }
+        }
+        println(print winnner)
+    }
+
+    private int jumpCheck(position){
+        if(position>length*length-1)return position;
+
+        //lets say position is 33 so with mod we can get row and col
+        Cell cell=board.getCell(playerNewPosition);
+        if(cell.jump!=null && cell.jump.start==playerNewPosition//just a safe check i guess){
+            String jumpBy=(cell.jump.st < cell.jump.end)?"ladder":"snake";
+            println("jump done by: "jumpBy);
+            return cell.jump.end;//give the positon
+        }
+        return position;//return old position only
+    }
+
+    private Player findPlayerTurn(){
+        last= dequelist.removeFirst()
+        dequelist.addLast(last);
+        return last;
+    }
+}
+
+//main
+main(){
+    Game obj=new Game();
+    obj.startGame();
+}

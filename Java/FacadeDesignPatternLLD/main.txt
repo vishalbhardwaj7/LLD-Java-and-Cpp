@@ -1,0 +1,205 @@
+// we will cover facade design pattern and cover different usecases
+// facade vs proxy pattern
+// facade vs adapter pattern
+
+
+// where to use facade ?
+
+// when to use facade and why ?
+
+
+
+
+
+// it is used when we have to hide the system complexity from the client thats all
+
+// for eg.
+// Car
+
+// Usser -> Press accelerate() -> speed goes up
+// user  -> press brake()      -> speed goes down
+
+// but real complexity behind the accelerate client does not know that is abstraction / facade
+
+// all we care about the functionality
+
+
+// so we need to hide the system complexity from client
+
+// client should not know this 
+
+
+
+// this is facade layer
+
+
+||||||||||||\|||||||
+|                  |lot of classes in system
+|                  |
+|                  |
+|                  |
+|  system          |
+|                  |
+|                  | <----------Facade layer <<<<<<-------- client
+|                  |             (complex logic)
+|                  |
+|                  |
+|                  |
+|                  |
+|                  |
+|                  |
+|------------------|
+
+we are not forcing client to talk with facade, client can directly use system too
+
+// we cant enforce client
+
+// client can directly use class1 and class 2 also
+
+// its client choice only
+
+
+// different scenarios we can use this
+
+
+
+EmployeeDAO{//dao layer (data access object layer)
+    insert()
+    updateEmployeeName()
+    Employee getEmployeeDetails(String emailId)
+    Employee getEmployeeDetails(int empID)//there can be more methods also
+}
+
+
+// lets say client is only intersted about getting employeeDetails by id it is not bother by other all 50 methods
+
+// so we bring a facade here
+
+// just have a employee dao object in facade class
+// only have two methods insert() and getEmployeeDetails() and that are exposed to end user now
+
+
+class EmployeeFacade{
+    // it also takes responsibility to initiating dao object too
+    new EmployeeDao
+    has-a employeeDao
+}
+
+class client has EmployeeFacade
+
+
+// scenrio 2--------------
+
+
+
+
+Complex system
+
+
+|        productDAO{
+|            getproductFunction
+|        }
+|        
+|        payment{
+|            make payment function
+|        }
+|        
+|        invoice{
+|            generateInvoice function
+|        }
+|        
+|        sendNotification{
+|            sendNotification()function
+|        }
+
+
+// subsystem {
+    payment,
+    product,
+    notification,
+    invoice,
+}
+
+// now client wants to make an order
+
+// process of creating an order ...
+
+// 1. get product
+// 2. make payment
+// 3. generateInvoice
+// 4. sendNotification
+
+
+
+// client should have the knowledge of all these steps to do order
+
+//lets say in future one more step is there between this so cliennt is needed to know
+
+// or return type of invoice changes..
+
+
+
+// so any changes in this logic will impact the client directly 
+
+// so better way is to bring a facade layer
+
+// so we create a facade layer between 
+
+class facade{
+    // make all the required objects
+    // perform steps one by one
+    // then order is created successfully
+    // so it has
+}
+
+client will call createorder() of facade directly
+
+// client should not even bother 
+
+
+
+// scenario 4. facade using another facade
+
+               --------------------
+               |                   |
+               |                   ^  
+// client -> facade -> facade -> facade
+               |
+               system
+
+// no lets say 4th one is payment facade
+// so first one is checkout facade
+
+// it can checkout then call the 3rd one 
+
+
+------------------------
+
+Facade vs proxy
+
+proxy ---
+
+employeeDao interface
+
+\                   | 
+employeeDaoimply   employee proxy is calleing impl
+
+
+client is calling proxy and it is calling impl
+
+// so proxy is for a particular object and of same interface
+// so it takes care of a particular object only
+
+// so it wont take care of order dao
+
+// it will only take care of EmployeeDAO
+
+
+// facade vs adapter
+
+
+
+// lets say client and original interfaxce is incompatible so we careate a medeator to bring compatibility
+
+
+// but facade is used to clear the complexity between client and the system

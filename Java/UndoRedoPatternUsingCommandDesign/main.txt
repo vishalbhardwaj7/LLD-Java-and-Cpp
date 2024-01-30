@@ -1,0 +1,284 @@
+// command design pattern is a behavioral type of pattern
+
+// it comes when any command we give copy/paste/turnon etc
+
+// problem ?
+
+main(){// client
+    AirConditioner ac = new AirConditioner();
+    ac.turnONAC();
+    ac.setTemperature(24);
+    ac.turnOffAC();
+}
+
+public class AirConditioner{
+    boolean isOn;
+    int temperature;
+
+    public void turnOnAC(){
+        isOn = true;
+        System.out.println("ac is on");
+    }
+
+    public void turnOffAC(){
+        isOn = false;
+        System.out.println("ac is off");
+    }
+
+    public void setTemperature(int temp){
+        this.temperature=temp;
+        System.out.println("temperature changed to:" + temperature);
+    }
+}
+
+
+// what are the issues???
+
+1. Lack of abstraction . Client needs to know the methods so what if in future a set of methods
+   is required to turn on the ac so the client has to have the knowledge of that.
+
+2. Undo/Redo functionality. Whenever there is this type of usecase one thing to think is how
+   will you do the undo/redo operation after doing something.
+   How will undo the turnonAC command. You can turnOffAC but that is not undoing. Also if there are 
+   ten steps in turning on AC, how will you undo those....???
+   If client has to handle it then it is very bad habit or design of code. 
+
+3. Difficulty in code maintainance. What if in future, we have to support more commands for more devices example Bulb.
+   If there are hundred devices then we need to make for all those classes and client also become
+   tightly coupled with all the classes and also bulb and a/c context need to be made by client
+   Anything got change, client gets impacted
+
+// How command design pattern resolves it ?
+
+1. Receiver -- Who receive the command
+2. Invoker  -- Invoke the command for who is it intended for
+3. Command -- It commands the Receiver
+
+-- Client will use the Invoker to give commands
+
+Client ---------> Invoker ---------> Command ---------> Receiver
+              (Remote control)  
+
+// when a button is pressed it generate a command  
+
+// Air AirConditioner with Command design pattern;;
+
+
+
+
+// Receiver class
+
+
+public class AirConditioner{
+    boolean isOn;
+    int temperature;
+
+    public void turnOnAC(){
+        isOn = true;
+        System.out.println("ac is on");
+    }
+
+    public void turnOffAC(){
+        isOn = false;
+        System.out.println("ac is off");
+    }
+
+    public void setTemperature(int temp){
+        this.temperature=temp;
+        System.out.println("temperature changed to:" + temperature);
+    }
+}
+
+
+// Command class
+
+                        public interface ICommand{
+                            public void execute();
+                        }
+                            |
+                            |
+                            |
+=========================================================================
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+public class TurnACOnCommand implements ICommand{
+    AirConditioner ac;
+    TurnACOnCommand(AirConditioner ac){
+        this.ac=ac;
+    }
+    @override 
+    public void execute(){
+        ac.turnOnAC();
+    }
+}
+
+
+public class TurnACOffCommand implements ICommand{
+    AirConditioner ac;
+    TurnACOffCommand(AirConditioner ac){
+        this.ac=ac;
+    }
+    @override 
+    public void execute(){
+        ac.turnOffAC();
+    }
+}
+
+
+
+// Invoker class
+
+
+public class MyRemoteControl{
+    ICommand command;
+    MyRemoteControl(){
+
+    }
+
+    public void setCommand(ICommand command){//whichever button the client will press
+        this.command = command;
+    }
+
+    public void pressButton(){
+        command.execute();
+    }
+}
+
+// client
+
+public class main{
+    // ac object
+    AirConditioner airConditioner = new AirConditioner();
+
+    // Remote
+    MyRemoteControl remoteObj = new MyRemoteControl();
+
+    // create command and press button
+
+    remoteObj.setCommand(new TurnACOnCommand(airConditioner));
+
+
+    remoteObj.pressButton();
+}
+
+// client only has to worry about pressButton();
+// above three steps are for setup only
+
+// in future i can add bulb too in command class and it will work on a particular Receiver(code maintainance)
+
+-------------------=====================----------------========================------------------
+
+
+// how will we perform undo/redo functionality ?????????
+
+
+// Command class
+
+                        public interface ICommand{
+                            public void execute();
+                            public void undo();// added this method in command class
+                        }
+                            |
+                            |
+                            |
+=========================================================================
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+public class TurnACOnCommand implements ICommand{
+    AirConditioner ac;
+    TurnACOnCommand(AirConditioner ac){
+        this.ac=ac;
+    }
+    @override 
+    public void execute(){
+        ac.turnOnAC();
+    }
+    public void undo(){
+        ac.turnOffAC;
+    }
+}
+
+
+public class TurnACOffCommand implements ICommand{
+    AirConditioner ac;
+    TurnACOffCommand(AirConditioner ac){
+        this.ac=ac;
+    }
+    @override 
+    public void execute(){
+        ac.turnOffAC();
+    }
+    public void undo(){
+        ac.turnOnAC;
+    }
+}
+
+
+// Invoker class
+
+
+public class MyRemoteControl{
+    ICommand command;
+    Stack<ICommand> acCommandHistory = new Stack<>();//added stack here
+    MyRemoteControl(){
+
+    }
+
+    public void setCommand(ICommand command){//whichever button the client will press
+        this.command = command;
+    }
+
+    public void pressButton(){
+        command.execute();
+        setCommandHistory.add(command);
+    }
+
+    public void undo(){
+        if(!acCommandHistory.isEmpty()){
+            ICommand lastCommand = acCommandHistory.pop();
+            lastCommand.undo();
+        }
+    }
+}
+
+
+
+// client
+
+public class main{
+    // ac object
+    AirConditioner airConditioner = new AirConditioner();
+
+    // Remote
+    MyRemoteControl remoteObj = new MyRemoteControl();
+
+    // create command and press button
+
+    remoteObj.setCommand(new TurnACOnCommand(airConditioner));
+
+
+    remoteObj.pressButton();
+    remoteObj.undo();//just need to use this
+}

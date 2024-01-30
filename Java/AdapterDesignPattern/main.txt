@@ -1,0 +1,114 @@
+// we use it in our daily life
+
+// it is a bridge between existing interface and expected interface
+//   existing interface <---------------> expected interface
+                           bridge
+
+// uml diagram
+
+        client    --------------------->    <<adapter interface>>               
+                                                 request
+                                                   |
+                                                   |
+                                            concrete adapter class ---->  <<existing interface> has a
+                                              request();                       adaptee
+
+// where it is used ?
+
+// power adapter and socket
+
+// lets say we have a power adapter with oval and socket with sqaure so it can't fit so we need 
+// to have an adapter in between which turn oval to square
+
+// power adapter -- client
+// oval to sq adapter  -- adapter knows how to talk with this guy 
+// Socket -- adaptee or existing interface
+
+// client want to use adaptee but not compatible so we need an adapter
+
+
+
+// example 2 
+
+// XML to JSON parser
+
+// We have one server return XML 
+
+// Client wants JSON response
+
+// So we need an adapter inbetween XML to JSON
+
+// EXAMPLE 3
+
+// our company is talking to external party 
+
+// we can have a layer in between both of them so that even if they are sending same type of data upto know but soon they change it to something else so everything breaks at our end
+
+// we can use massaging of hash in adapter to get the right response Always
+
+// example 4
+
+
+// weight machine
+
+// weight machine shows in pounds but somebody needs to see in kgs
+
+
+// so we can bring adapter to talk to weight and convert pound to kg and show to client
+
+
+
+// Adaptee 
+
+<<interface>>
+WeightMachine{
+    public double getWeightInPound();
+}
+
+WeightMachineForBabies implements WeightMachine{
+    public double getWeightInPound{
+        return 28;
+    }
+}
+
+
+// now my client wants the weight in kgs
+
+// So bring an adapter in between
+
+
+// adapter
+
+public interface WeightMachineAdapter{
+    public double getWeightInKg();
+}
+
+class WeightMachineAdapterImpl implements WeightMachineAdapter{//concrete adapter
+    WeightMachine weightMachine; has->a weightMachine(adaptee)
+    public WeightMachineAdapterImpl(WeightMachine weightMachine){
+        this.weightMachine=weightMachine
+    }
+
+    public double getWeightInKg(){
+        double weightInPound=weightMachine.getWeightInPound();
+        //convert to kgs
+        double weightInKg = weightInPound*.45;//massaging of response from adaptee
+        return weightInKg;
+    }
+}
+
+// client
+
+main(){
+    WeightMachineAdapter weightMachineAdapter = new WeightMachineAdapterImpl(new WeightMachineForBabies());
+    system.out.println(weightMachineAdapter.getWeightInKg());
+}
+
+
+
+// even my mobile phone and socket is the example bcs we need a type c cable to scoket adapter.........
+
+// we have three types of design patterns
+1. Behavioral
+2. Structural -- this falls in category (because structural says clubbing together two or more objects to make a bigger structure to solve bigger problem. Here we are clubbing two different interface to acheive a bigger goal)
+3. Creational

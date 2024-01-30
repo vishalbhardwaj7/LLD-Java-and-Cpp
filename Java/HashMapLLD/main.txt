@@ -1,0 +1,44 @@
+// Map <Integer, String> map = new HashMap<>();
+//map.put(1,"hi");
+//map.get(1);
+
+// Jargons
+1. defaultSize
+2. Load Factor
+3. Internal implementation
+4. Collision
+
+//When we make map without any size (passsing nothing in consructor)
+// defaultSize = 16
+//size is always in powers of 2 for better Collision management
+
+Map
+1. map.put(1,"hi")
+2. hashCode is generated to give index
+3. On 13(suppose i got) I will store key and value
+4. map.put(235,"shreyansh")
+5. lets suppose same hashcode comes again
+6. So it will link the next ptr of 13 to new node
+7. Internally map maintain a list on each index
+
+
+
+Hashmap
+1.  |
+2.  |
+3.  |
+4.  |
+5.  |
+6.  |
+7.  |
+8.  |
+9.  |
+10. |
+11. |
+12. |
+13. | Key = 1 Value "hi" nxtPtr -> Key 2 Value "shreyansh" nxtPtr -> null
+14. |
+15. |
+16. |
+
+

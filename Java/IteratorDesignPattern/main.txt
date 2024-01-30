@@ -1,0 +1,8 @@
+// collections expose an iterator method
+// it does not worry about the type but it just give the next of it
+
+
+// it is a behvioural design pattern
+//  it provides a way to access element of a collection sequentially wothout exposing  
+the underlying representation of the collection
+

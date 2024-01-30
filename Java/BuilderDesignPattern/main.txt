@@ -1,0 +1,160 @@
+// String builder is based on it
+// Builder v/s Decorator !!!
+
+
+// It is a creational design pattern so it helps in creation of an object 
+
+// What problem does it solves ?
+
+// Lets say an object with many optional fields 
+// Student 
+ int rollNo;//only this is mandatory
+ int age;           ----------                    
+ String name;                 |  
+ String fatherName;           |   -> Optional fields     
+ String montherName;          |         
+ List<String> subjects;       |            
+ String mobileNumber;---------        
+
+ // problem 1. 
+ // very big constructor parameter list
+ // Instead of one big constructor i can have small small constructors like if i want a student with roll number 
+ // and age i can have Student(int roll, int age) .. and so on with different parameters
+ // Also if we have two constructors Student(int roll, String fatherName, String montherName) and Student(int roll, String fatherName, String studentname)
+ // Compiler will throw error because signatures are same
+
+ // this is where builder dp comes into picture 
+
+ // it is a step by step creation process
+
+ // For eg Take a House object
+
+ // It composes of roof, window, door, walls.........
+
+ // addRoof, addWall, addDoor, ........ step by step we have to perform something (it is in builder/mediator form when add is being invoked)
+
+ // once all done, it will say build();(when this method is called it return the House object)
+ // so it will make a House
+
+ // now he shows the string builder implementation in java
+
+ // append method , deleteChar all the methods never return us final objects it returns us StringBuilder objects which itself is mediatory objects
+
+ 
+ // when all methods are done it returns the actual object;
+ // so for stringbuilder when we call toString(), it returns us the actual object;
+
+
+
+ // now lets see the example in other files
+
+ // class Student {
+    // all the mandatory and optional members
+
+    // constructor(builder object){
+        all fields are filled with help of builder object
+    }
+ }
+
+ // builder will also have all these parameters
+ // this is one of the cons of builder design pattern that all the members need to be there
+ // for builder also this is code duplicacy and lines of code increase
+
+
+ <<interface>> builder or it can be a abstract 
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ |            |
+ Engineer    MBAStudentBuilder ........ so on
+ Student
+ Builder
+
+ //// just to differentiate between mba and normal student we have differentiated the setSubjects method between them
+
+ // third layer is director layer
+
+ // it directs basically to call methods in order ....
+ // based on instance of Student it calls the respective methods
+
+ // it helps in sequencing and business logic
+
+ // fourth layer client
+
+
+ // client calls to director it just needs to call create student
+
+
+
+
+
+// why it is getting confused with Decorator? 
+// whole culprit is pizza example
+
+
+
+Builder            |                        Decorator
+                                                        
+1.Creational dp               1. Structural DP
+2. Helps in creationc         2. Helps in creating complex strcuctures 
+                                                        
+                                                        
+                                                        
+                                                        
+Lets take example of pizza
+
+
+
+                                                        
+                                                        
+                                                        
+                                                        
+We have a base pizza, 
+It cann be decorated with cheese and then mushroom so it is again a pizza and can be used
+
+
+
+lets use with builder dp
+
+pizza{
+    mandatory;
+    Base base;
+    optional 
+
+    Cheese cheese
+    Mushroom mushroom
+}
+                                                        
+2nd layer
+
+pizzaBuilder abstract or interface{
+    
+}
+|                                         |                                                      
+|                                         |             
+|                                         |            
+|                                         |             
+|                                         |             
+|                                         |             
+BasePizza + Cheese Builder                Baee piza + mushroom pizza                                       
+                                                        
+
+
+// now leys say director calls basepizza+cheesePizza
+// now it calls the methods sequentially addCurst,addCheese then build()
+
+//now for base + mushroom it will do the same thing
+
+
+
+// now we got another request base+cheese+mushrooms??
+
+// builder cant handle it because it cant handle dynamic request so we need to make third class
+
+// but Decorator can help it

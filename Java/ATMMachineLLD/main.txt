@@ -1,0 +1,119 @@
+// two design patterns will be used here 
+1. Chain of responsibility and 2.State Design pattern
+
+//Some time we might use only 1 of these or sometimes both
+
+//we have to clarify it with interviewer about the scope of LLD and decide
+
+// What is state design pattern ?
+
+// Any real time object which has operations (tv,vending machine, atm)
+// Op1 op2 ->state 1
+// op2 op3 -> state 2
+// op3 .. opn -> state 3
+
+ object at state -> state <<interface>>
+                     |       |       |
+          (op1,op2)concrete  cs2     cs3
+                    state
+
+//each state will define its own functions only and do some default behaviour for the rest of the functions
+
+  
+// What is chain of responsibility ?
+
+//Any request which comes in goes in processors so if processor 1 cant do it then it goes to second and so on...
+
+// It will return from there wherever it got fulfilled
+
+
+// Flow ?
+
+// What is the flow ? 
+                                                                                     (cash deposit, cash withdrawl, balance)
+//ATM (idle) -> User(with card) -> Insert Card in ATM -> ATM will authenticate the PIN -> It will provide some functions now -> User perform one op at a time -> After completion of an operation -> Perform operation -> Again ATM go to idle  
+
+
+// what are set of operations ?
+
+// InsertCard()
+// AuthenticatePin()
+// SelectOperation()
+// PerformOperation()
+...............could be more
+
+
+//All operations cant be done in single state ......
+
+
+// InsertCard() -> Idle state
+// AuthenticatePin() -> HasCard state
+// SelectOperation() -> SelectionState
+// PerformOperation() 
+
+
+// Now we got to know it falls under state design pattern ..........
+ 
+
+// where does chain of responsibility come into picture
+
+// now lets deep dive in one operation cashWithDrawl
+
+// now we know we have 3 type of notes
+// 2k, 500rs, 100rs notes
+// we want to get 3k rupees
+// so we need 1 2k note and 2 500 notes
+// generally goes into decreasing order 
+
+
+Request                  ->  2k Rs processor ->                                              500 rs processor                -> 100 rs processor 
+(withdraw amount 3000)      (i can fulfil 1 note only check for other from next processors) (i only have 1 note of 500)         (i have 5 note so total request fulfilled)
+
+// so here it comes to picture
+
+// but we need to clarify with the interviewer the scope of LLD for this
+// if he says we can directly reduce total amount then we dont need chain of responsibility design pattern
+
+
+
+// UML diagram
+
+ ATM room          ->                       ATM obj ->              ATM state <<abstract class >> 
+ has ATM obj                        has a ATM state                //functions --
+ has User obj                                                      InsertCard
+   |                                                              AuthenticatePin
+   |                                                              SelectOperation
+   |                                                              cashWithDrawl                                                                      -> this is state dsign
+   |                                                              displayBalance
+   |                                                              returnCard
+   |                                                              exit
+   |                   -------------------------------------------------------------------------------------------------------------------                                           
+   |                   |                   |                        |                                    |                               |
+   |               idle state            HasCard                 SelectOperation                   cashWithDrawl State                 checkBalance
+   |               InsertCard()         AuthenticatePin()        exit()                              cashWithDrawl()                   displayBalance()
+   |                                    exit()                   SelectOperation()                   exit()                            exit()   
+   |                                    returnCard()             returnCard()                        returnCard()                      removeCard()
+   |                                                                                                has-a CashWithDrawlProcessor
+   |
+User object                        Card object                      BankAccount 
+has card                           has Cvv, expiry, bankAccount     has balance, updateBalance method
+has BankAccount
+
+
+How ATM and User are linked ? 
+
+ATM room 
+has a ATM atm
+
+
+
+// now lets come to chain of responsibility design pattern
+                              CashWithDrawlProcessor has a reference of itself nextCashWithdrawlProcessor
+            |                                               |                           |
+        2k processor                                       500 processor               100 processor
+        (withdraw method)                                  (withdraw method)           (withdraw method)
+    int the constructor                                    same for this i set 100    here the next will be null
+    i will set the next to be 500
+    so if it cant fulfil then it set the next and call 
+
+                   

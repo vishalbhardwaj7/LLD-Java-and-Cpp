@@ -1,0 +1,236 @@
+//Design file system/ design calculator
+
+// it means object underobject basically
+
+// when does it happen
+
+// whichever probllem is creating a tree like structure means object under object/
+// then it is composite design pattern
+
+// consider an example 
+// Employee
+//   Ceo
+   |          |
+   director
+      |
+      manager
+   |         |
+   it engg.  marketing team
+             |         |
+
+
+
+// what is end product ? it engg it does not has any child nodes
+
+//another example
+// delivery box 
+ |         |
+ product  box
+          |
+         product
+
+// Problem 1
+// Design file system
+// what does it have?
+// it can have directory or diretly a file or a directory inside directory .......
+
+// tree like structure it is
+
+// generally how we will do it
+
+// directory class has -> a file class
+
+
+
+// this is problem statement i need to do typecasting and put if conditions
+public class Directory{
+    String directoryName;
+    List<Object> objectList;
+
+    public Directory(String name){
+        this.directoryName=name;
+        objectList=new ArrayList<>();
+    }
+
+    public void add(Object object){objectList.add(object);}
+
+    public void ls(){
+        system.out.print("Directory name": + directoryName);
+        for(Object obj:objectList){
+            if(obj instanceOf File){
+                ((File)obj).ls();//type casting
+            }
+            else if(obj instanceOf Directory){
+                ((Directory)obj).ls();
+            }
+        }
+    }
+}
+
+public class File{
+    String fileName;
+    public File(String name){
+        this.fileName=name;
+    }
+
+    public void ls(){
+        system.out.println("file name" + fileName);
+    }
+}
+// this is problem statement i need to do typecasting and put if conditions also instanceOf......
+
+// how composite design pattern solves this ?
+
+// you can create an interface
+
+
+             Componend = <<FileSystem>> interface <-
+                  operation();                     | 
+             |                    |                |
+             Leaf            composite             |
+             operation();    operation()           |
+                             add();      -----------
+
+
+
+
+ex with file system
+//
+
+             Componend = <<FileSystem>> interface <-
+                  ls();                            | 
+             |                    |                |
+             File            Directory             |
+             ls();           operation()           |
+                             add();      -----------
+                 
+
+public interface FileSystem{
+    public void ls();
+}
+
+public class File implements FileSystem{ -- Leaf object
+    String fileName;
+
+    public File(String name){
+        this.fileName=name;
+    }
+
+    public void ls(){
+        system.out.print("file name "+fileName);
+    }
+}
+
+
+public class Directory implements FileSystem{ -- composite obj
+    String directoryName;
+    List<FileSystem> fileSystemList; is-a and has-a both  and one to many relation ship
+
+    public Directory(String name){
+        this.directoryName=name;
+        fileSystemList=new ArrayList<>();
+    }
+
+    public void add(FileSystem fileSystemObj){
+        fileSystemList.add(fileSystemObj);
+    }
+
+    public void ls(){
+        system.out.println("Directory name " + directoryName);
+
+        for(FileSystem fileSystemObj:fileSystemList){
+            fileSystemObj.ls();
+        }
+    }
+}
+
+
+main{
+    void main(){
+        Directory movieDirectory=new Directory("movie");
+        movieDirectory.add(new File(Border));
+        Directory newMovieDirectoy=new Directory("comedy movie");
+        hulchul = (new File hulchul);
+        movieDirectory.add(newMovieDirectoy)
+
+        movieDirectory.ls();
+        }
+}
+
+
+
+// now another exampple
+
+// arithmetic expression
+
+// 2*(1+7) or it can be more complex
+
+
+
+// how it forms a tree like structure
+
+              *
+        2          +
+                 1   7
+
+// we can solve it using composite design pattern
+
+// let me show you
+
+//
+
+
+             Componend = <<arithmeticExpression>> interface <-
+                  eval();                                       | 
+             |                    |                             |
+             Number            expression                       |
+             eval();           eval()                           |
+                               add();      ----------------------
+
+
+public interface arithmeticExpression{
+    public int evaluate();
+}
+
+class Number implements arithmeticExpression{ -- leaf node
+    int value;
+    // contructor to take a value and assignment
+
+
+    // public int evaluate(){
+        Number value is "+ value;
+        return value;
+    }
+}
+
+public class Expression implements arithmeticExpression{
+    enum operation opertion;//plus minus etc
+    Expression leftExpression;
+    Expression rightExpression;
+
+
+    // constructor to assign 
+
+    public int eval(){
+        int value=0;
+        switch(op){
+            case ADD: value= leftExpression.evaluate+rightExpression.evaluate();
+            ................. similarly more
+        }
+        return val;
+    }
+}
+ 
+
+main(){
+    arithmeticExpression two=new NUmber(2);
+    arithmeticExpression one=new NUmber(1);
+
+    arithmeticExpression seven = Number(7);
+
+    arithmeticExpression addExpression(new Expression(one,seven,ADD);
+
+    arithmeticExpression parentExpression= new Expression(two, addExpression,MUltiple);
+
+    print(parentExpression.evaluate());
+}

@@ -1,0 +1,103 @@
+// there are two issues in this ....
+// there are certain memory issues with the double locking system
+
+// issues
+issue 1. reordering of th instructions
+1. connObject= new DBCOnnecetion(10); 
+lets say if this step is in a whole process (steps)
+ a. allocate memory 
+ b. initialization of all member variables
+ c. assign reference of memory db connnection obj
+
+// method after expanding the getinstance method in double locking
+
+public static DBConnection getInstance(){
+    private static DBConnection conObject;
+    int memberVariable;
+    private DBCOnnecetion(int memberVariable){
+        this.memberVariable=memberVariable;
+    }
+    if(conObject==null){
+        synchronized(DBConnection.class){
+            if(conObject==null){
+                1.memoryPointer=allocateMemory();
+                2.memoryPointer.memberVariable=initializeVariable();
+                3.conObject=memoryPointer;
+            }
+        }
+    }
+    return conObject;
+}
+
+// now we know cpu does reordering of the instructions for performance
+
+// lets say step two in synchronized env happens after step 3 so conObject=memoryPointer first, then memoryPointer.memberVariable is initialized
+// lets say before this assignment or initialization happens a thread 2 comes in check line 19 so it will not pass the if condition bcs 
+// connObject is assigned a reference
+// so now what will happen is it will return a connObject which is having a reference to a memory where the member variable is not initialized yet
+
+
+
+2. issue 2
+
+L1 caching issue
+
+// lets say we have different cores in cpu
+// each core has its own cache
+// and the cache has some access to the memory
+
+// 
+
+core           core -- computation is done there
+|                |
+|                |
+|                |
+Cache<--------->Cache (they talk with themselves too)(this is l1)
+|                |
+|                |
+|                |
+------------------
+         |
+         Memory
+
+// what issue can happen here ????????
+
+
+// lets say connobject is created by thread 1 and sitting in cache 1 currently 
+// currently it is not put in memory yet so it is not pointed
+
+// now thread two is coming and going to different core
+// also the sync up between cache1 and cache2 is not yet done
+
+// now it will check the memory so connObject is not assigned in the memory yet
+
+// it will create another object now /...........
+
+// this creates the issue
+
+// solution
+
+
+
+
+1. using volatile keyword in front of DBConnection object;
+
+properties of volatile keyword ...
+1. read and write from memory(no use of l1 cache) . so thread2 will read from the memory and get the obj made by thread 1
+2. lets say we write a code like this 
+    I1
+    I2
+    I3
+    volatile OBJ initialization
+    I4
+    I5
+    I6
+
+    // this makes sure that i1 i2 i3 can be rearrange by cpu but they need to be done before starting any of i4 i5 I6
+    // also it will make sure to first dump i1,i2,i3 in memory before performing next set of instructions
+
+// so step 3 that is line 25 will not be performed before making other two steps above but they can rearraged by cpu no issues
+// so assignment will always happen at last it will mean that thread2 will never get the wrong object like before
+
+
+// can we write a double locking pattern without synchronized ? 

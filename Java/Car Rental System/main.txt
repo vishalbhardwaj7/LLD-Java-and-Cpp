@@ -1,0 +1,202 @@
+//rough flow
+1. keep the design as simple as possible
+//interviewer is greedy
+//dont give too many options as interviewer is greedy
+
+user went to a car site
+so if his location is bangalore then we want to only see those city's cars
+//all store will be listed
+//then i click on store
+//all its vehicle will be listed
+//also need filter capability to filter on basis of other things
+//now user will reserve the vehicle
+//now pays the bill
+//Payment is done
+//User submit the vehicle(take it)
+
+//now we can ask interviewer to ask if he has other requirements
+
+//requirement clarification
+//lets make it scalable so that in future if it becomes some other vehicle rent company, we can accomodate that in our code
+
+
+// objects
+1. User
+2. Location
+3. store
+4. Vehicle
+5. Reserve
+6. Bill
+7. Payment
+
+class Vehicle{
+    int id;
+    int veh_no;
+    VehicleType ; (enum) Car,Bike;;;;;;;;;
+    int kmDriven;
+    Date manufacturingDate
+    int dailyRentalCost;
+    int hourlyRentalCost;
+    Status status; (enum) Status{ACTIVE,INACTIVE}
+    //define getters and setters here
+}
+
+class Car{ is-a vehicle
+
+}
+class Bike{ is-a vehicle
+
+}
+
+//i can create child class of vehicle as a car bike or anything in future (however and whatevr we like)
+
+class Store{
+    int storeId;
+    VehicleInventoryManagement InventoryManagementObj;//has -> a
+    Location location; has->a
+    List<Reservation> reservationlist;//if i reserve a vehicle, so that store has 
+    // that Reservation so that Reservation can't independently survive, it 
+    // needs a reservationlist 
+
+    List getVehicles(string vehicleType){
+        return VehicleInventoryManagement.getVehicle(//can add filters here);//whicher type of inverntory is there it will invoke its getVehicle function 
+    }
+
+    createReservation(vehicle,user){
+        //new Reservation;
+        //Reservation.createReservation();
+        //reservationlist.add(reservation);
+        //return reservation;
+    }
+
+    //update reservation
+    //from list of reservation i can update the reservation so it will invoke Reservation.updateReservation
+    
+
+    //completeReservation(int reservationId){
+        //take the reservation from the list and call complete reservation of reservation class
+        return true;
+    }
+}
+
+
+class VehicleInventoryManagement{//this is for simplification so that store class wont be bulk up
+    List<Vehicle> vehicles; has->a
+    //all the crud operations will be done here
+
+    //getVehicles(//take filters and return the vehicles)
+}
+//in future i can make it carInventoryManagement oer BikeInventoryManagement in future so we will change this class only in future 
+
+class Location{
+    String address;
+    String city;
+    String state;
+    int pinCOde;
+}
+
+class Reservation{
+    int ReservationId;
+    User user;
+    Vehicle vehicle; has-> vehicle
+    DateBooking date;
+    BookedFrom;
+    BookingDateTo;
+    Location pickupLocaiton;
+    dropLocation;
+    ReservationType reservationType;
+    ReservationStatus reservationStatus;//scheduled,inprogress,Completed,cancelled(enum)
+    Location location; has -> 
+
+    void createReservation(User user, Vehicle vehicle){
+        reservationId = 12232;
+        this.user=user;
+        this.vehicle=vehicle;
+        reservationType = DAILY;
+        reservationStatus= scheduled;
+        return reservationId;//
+    } 
+    //update
+
+    //completeReservation;
+}
+
+class User{
+    int userId;
+    String drivingLicense;//should be required
+    String userName;
+
+    ///cruds
+}
+//user current location will matter not the permanent location so not using the location
+
+
+class Bill{
+    Reservation reservation;//has->a
+    booean isPaid;
+    double Amount;
+
+    Bill(Reservation reservation){
+        this.reservation=reservation;
+        this.amouny=computeAmount();//we can define this also
+        isBillPaid = false;
+    }
+}
+
+class Payment{
+    Bill bill;//has->bill
+    payBill();//on basis of bill we can do payment
+    //we can also stretch it to cash or online payment
+}
+
+
+VehicleRentalSystem{
+    List<User> users;
+    List<Stores> stores;
+
+    //it supports crud operations on users and stores;invoke the user and stores crud methods
+
+    getStore(Location location){
+        return storeList.get(0);//based on location give the store
+    }
+
+    //add users
+    //remove users
+    //add stores
+    //remove stores
+}
+
+
+
+
+
+main(){
+    //add some users vehicles and stores in starting
+    List<users> = addUsers();
+    List<Vehicle> vehicles = addVehicle();
+    List<Store> stores= addStores(vehicles);
+    VehicleRentalSystem rentalSystem = new VehicleRentalSystem(stores,users);
+
+    //0. user comes
+    User user = users.get(0);
+
+    //1.search store based on location
+    Location location = new Location (pincode,city,............);
+    Store store= rentalSystem.getStore(location);
+
+    //2. get all vehicles you are intersted in based on filters
+    List<Vehicle> storeVehicles = store.getVehicles(VehicleType.Car);//get all cars;
+
+    //3.reserving your car
+    Reservation reservation = store.createReservation(storeVehicles.get(0),users.get(0));
+
+    //4. generate the bill
+    Bill bill - new Bill(reservation);
+
+    //5. Payment
+    Payment payment = new Payment();
+    payment.payBill(bill);
+
+    //6. complete ride
+    store.completeReservation(reservation.reservationId);
+}

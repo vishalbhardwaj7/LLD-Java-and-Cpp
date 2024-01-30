@@ -1,0 +1,220 @@
+//make a parking lot LLD
+
+Rough Diagram
+Entrance Gate ->                 Parking Spot -> Exit -> Vehicle is Out
+(Vehicle and Ticket Generation)
+
+// Objects and their high level responsibilities
+
+Vehicle - Vehicle No., Vehicle Type(Enum (2 Wheeler, 4 Wheeler))
+Entrance Gate - Find parking spot, update parking space, Generation of Ticket
+Ticket - Entry Time, Parking Spot
+Parking Spot - id, PS number, isEmpty, Vehicle Type(tells for which vehicle type it is there)
+Exit Gate - Cost calculation, update Parking space
+
+// LLD
+<<General class>>
+Parking Spot Class has-a -> with Vehicle class
+{
+    id : int
+    isEmpty : Boolean
+    Vehicle vehicle
+
+    functions - 
+    parkVehicle(Vehicle v){
+        vehicle = v;
+        isEmpty = false;
+    }
+    removeVehicle(Vehicle v){
+        vehicle = null;
+    }
+}
+
+Two wheeler spot class -> is-a withParking Spot Class
+{
+    //will inherit other functions but can override price functions
+    price(){
+        return 10;
+    }
+}
+Four wheeler spot class -> is-a withParking Spot Class
+{
+    //will inherit other functions but can override price functions
+    price(){
+        return 20;
+    }
+}
+
+ParkingSpotManager Class - has-a -> ParkingSpotClass (manager will take care of findind, adding, removing parking spaces and also adding removing vehicles)
+{
+    List<ParkingSpot > list;//have a list of all parking spot Objects
+    ParkingStrategy ps;
+consructor - 
+    PSM(<PS>list,PS){
+        list=list;
+        ps=ps;
+    }
+functions - 
+    findParkingSpace(){
+        //it will find acc to ps being assigned with use of strategy pattern
+    };
+    addParkingSpace();
+    removeParkingSpace();
+    parkVehicle();
+    removeVehicle();
+}
+ 
+TwoWheelerManager -> is-a ParkingSpotManager 
+(lets say we only have 600 2 wheeler spots so it takes care of all those spots only)
+{
+    List<PS>list=600 two wheeler spots list;
+    TwoWheelerManager(){
+        super(list,Near to Entrance);
+        //sends super consructor its own list so PSM will be made for this 600 and strategy type its gonna use
+    }
+}
+FourWheelerManager -> is-a ParkingSpotManager 
+(lets say we only have 400 4 wheeler spots so it takes care of all those spots only)
+{
+    List<PS>list=400 two wheeler spots list;
+    FourWheelerManager(){
+        super(list,Near to Entrance and Elevator);
+        //sends super consructor its own list so PSM will be made for this 400 spots, and the strategy type its gonna use
+    }
+}
+
+//now lets say in findParkingSpace function we have a default calculation to find a space but we wanna use
+//a dynamic strategy to find parking spaces
+// then we can use the strategy design pattern we learnt earlier
+//two wheeler manager can tell to use whichever type of strategy
+//so it can pass to its super one more thing (parking strategy object)
+//now manager will use find method of those strategy objects sent only
+
+ParkingStrategy
+1. Near to Entrance -is-a to ParkingStrategy
+2. Near to Entrance and Elevator -is-a to ParkingStrategy
+3. Default -is-a to ParkingStrategy
+
+
+Vehicle{
+    int vehicle number;
+VT vehicleType;           VT{
+                        2 wheeler;4 wheeler;//we can add more types for support in future
+                            }
+}
+
+Ticket{//ticket class
+    long entryTime;
+    Vehicle v; has-a -> vehicle
+    ParkingSpot ps; has-a -> ParkingSpot
+    //getters and setters
+}
+
+EntranceGate{ has-a -> PSMfactory
+    // lets say EntranceGate recieves a vehicle object 
+    // 1. find PS acc to vehicle type
+    // PS will be found by PSM 
+    // How to decide which PSM will be used
+    // Here comes the factory design pattern
+    // PSM factory will be used here now
+    // has-a -> PSMfactory
+members ; 
+    PSMFactory object;
+    PS Manager;//got from factory object only
+    Ticket obj;//has->a with ticket object also
+functions :
+    findParkingSpace(//pass Entrance gate number so that it can be further used by strategy to calculte something)
+    //it will fetch right ps acc to right strategy from PSM object given to us by factory
+    bookSpot()//calls PSM to park vehicle function
+    generateTicket();//assign entry time and the PS returned from bookSpot function
+}
+PSMFactory(){ //has-a -> PSM
+    getPSM(Vehicle v){
+        //we can use switch case on vehicleType and return the desired manager object which will help
+    }
+}
+
+//exit gate logic
+
+
+Pricingstrategy{
+    price(){
+        return 100;//100 rs for any charge
+    }
+}
+HourlyBasisPS(){//is-a > pricing strategy
+    price(ticket){
+        //get PS spot from ticket
+        //ps.price*(currenttime-ticket.entrytime/60)
+        //or some businesslogic
+    }
+}
+MinuteBasisPS(){//is-a > pricing strategy
+    price(ticket){
+        //get spot from ticket
+        //do some business calculation
+    }
+}
+
+Cost Computation Class 
+1. 2 wheeler cost Computation is-a -> cost Computationc class
+2. 4 wheeler cost Computation is-a -> cost Computation class
+CostComputation{
+    //has->Pricingstrategy
+    consructor(){
+        //default Pricingstrategy
+    }
+    consructor(Pricingstrategy){
+        //assign ps object
+    }
+    //compute method
+    {
+        invoke psObject.price(ticket);
+    }
+}
+TwoWheelerCostComputation{
+    consructor(){
+        super(HourlyBasisPS);//ask its super class to use hourly basis ps
+    }
+}
+FourWheelerCostComputation{
+    consructor(){
+        super(HourlyBasisPS);//ask its super class to use hourly basis ps
+    }
+}
+
+//exit gate
+{
+    Ticket;
+    CostComputation object;//that also can be identified from a factory
+    //based on this object given by the factory
+    //call price method
+    obj.price();
+    //can also have a payment object 
+    has-> payment obj//can use further
+    //now last thing is there
+    //we need a psm object too
+    PSM obj;(can use factory to get the object)
+    //now invoke the remove vehicle function of that obj;
+}
+
+CostComputationFactory{
+    Ticket(){
+        //take vehicletype from ticket
+        switch on vehicle type and return two wheeler or 4 wheeler CostComputation object type
+    }
+}
+
+Payment{
+    
+}
+CashPayment
+{
+    //do entry in cash table
+} 
+CardPayment is-a-> Payment
+{
+    //do entry in card table.
+}
+//lets say if more than one Entrance is needed
+// so we can have concept of entrance gate manager as i am already taking in consideration of the entrance type in finding the spots

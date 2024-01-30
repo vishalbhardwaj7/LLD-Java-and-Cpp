@@ -1,0 +1,226 @@
+//rough flow
+
+
+Building    
+f1-----
+f2-----  | | Lift (User giving direction up and left to lift)
+f3-----
+f4-----
+
+//lift dispatch algo
+
+
+//requirement clarification
+//1.How many lifts ?
+ans. can be n(interviewer tells)
+
+//2.If more lifts are there than one then there is a decision to make what to send(what lift to dispatch)
+//there can be many algos suppose one lift wiill work on odd floor and other on even floor
+
+//3. lift dispatch algo?
+//if interviewer says in future i want to change the algo to maybe nearest to user fetch that or something else
+
+
+//objects
+
+1. object
+2. Floor
+3. External Button 
+
+4. Elevator car -> Display , Current Floor, Direction(Enum of up and down),Status(Also Enum(moving and idle)),Internal Button,Doors
+
+5. Display
+
+6. Internal Button
+
+7. Door
+
+
+//Algorithm and Design two parts of this LLD
+
+
+//first we will discuss the design
+//Design
+
+//Display
+class Display{
+    int floor;
+    Direction dir;
+}
+
+class ElevatorCar{ // its a dumb object so in future if algo changes it does not affect
+    int id;
+    Display obj; has->a
+    int currentFloor;
+    Direction dir; 
+    Status status;
+    InternalButton obj; has->a
+    Door obj; has->a
+
+    move(int destFloor,Direction dir){//dumbly will just go in any direction you ask it to
+        
+    }
+}
+
+Enum Direction{
+    up;down;
+}
+
+Enum Status{
+    IDLE;
+    MOVING;
+}
+
+class InternalButton{
+    InternalButtonDispatcher obj; has->a
+    //methods
+    pressButton(int button);//{
+        invoke dispatcher obj;
+    }
+}
+
+//who is conrolling the Elevator
+
+//ElevatorController 
+
+class ElevatorController{//if multiple Elevator then multiple controllers
+    Elevator obj;//has -> a
+    DS. maintain
+    //methods
+    acceptNewReq(floor,direction);//can be multiple request so need to fulfil them update the ds on base of algo
+    //accept newReq will implementation of whole heaps algo discussed for the lift below
+    controlElevatorCar();{
+        whole algo will run until it is aborted
+    }
+}
+
+//from where new request will come ?
+//1. from internal button
+//2. from external button
+
+class ExternalButtonDispatcher{
+
+}
+
+class InternalButtonDispatcher{
+    List<ElevatorController> list;//it has a list of controllers
+    //so on basis of controllers it will submit the req
+
+    submitReq(int liftid){
+        call// list[id].acceptNewReq();
+    }
+}
+
+
+class ExternalButtonDispatcher{
+    List<ElevatorController> list;//it has a list of controllers has->a ElevatorController
+    //so on basis of controllers it will submit the req
+
+    submitReq(int liftid,direction){//as this will have a lot of controllers so acc to id will invoke the function
+        call// list[id].acceptNewReq(floor,direction);
+    }
+}
+
+//lets say we have 3 lifts
+
+//from number 2 floor i press a button . which lift will come ?
+//this will depend on algo we use (might be fixed floors,nearest first or even odd etc)
+
+
+//based upon these will the submit req will be invoked
+class OddEvenDispatcher is->a ExternalButtonDispatcher{
+    
+}
+class FixedFloorDispatcher is->a ExternalButtonDispatcher{
+    
+}
+
+class ExternalButton{
+    ExternalButtonDispatcher has->a ExternalButtonDispatcher
+    pressButton(floor,direction){
+        submitreq of dispatcher//based on algo we are using dispatcher will make that object odd even or fixed or whatever
+    }
+}
+
+class Floor{
+    floorid;
+    ExternalButton ext; has->a
+}
+
+class Building{
+    List<Floor>floors;//each floor has a button
+
+}
+//whichever floor i am on i will press the external button of that . then dispatcher will use its algo
+//to select which Elevator to use and then call the submit req of that Elevator
+//when user gets inside and press the InternalButton then InternalButtonDispatcher comes to play and submitReq
+// to go to that floor
+
+
+//we have kept ElevatorCar as dumb object;
+
+
+
+//Algorithm
+1. One algo is used at ExternalButtonDispatcher
+2. One is used ElevatorController
+
+
+//usecases
+// we have a user           lift
+//1.          up            up
+//2.          up            down
+//3.          down          up
+//4.          down          down
+
+//now going into one level deep
+//lets say user is at 2 and want to go up but lift is at 3 and going up ?
+// will this fulfil the usecase? No
+// lift has to come down and again up to fulfil the user requirement
+
+//THERE IS A Algorithm
+//SCAN
+//defination
+
+ 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -
+ up   down      up        down      up
+
+ ------------------------------------> in one go fullfill all up usecases
+ <------------------------------------ in another go fullfill all down usecases
+
+// Disadvantage ?
+// lets say 50 floor Building is there, only up request if of 5th floor 
+// now we don't have any further up request so why we need to go to 50?
+
+
+//Look algo
+//next level of scan algo
+
+//after completion of one request. checks another request further. if not , then return back
+
+//we will use look Algorithm
+//
+
+//which DS to use ????
+      |7
+      |6 up request
+      |5            ^
+      |4       Lift | going up
+      |3
+      |2 down req
+      |1
+
+//i will make 2 priority queues
+// maxPQ down
+// minPQ up
+// pendingJobs queue
+// if i am going up and currently at 3 floor and got a request of 6th floor it will put it in minPQ 
+// if i am goign down and currently at 3 floor and got a request of 1 floor it will put in max PQ so it will be served first
+// if i recieve a down req of 2 but going up from 3 so put it in pending normal queue
+
+
+
+ //whatever current direction all opposite direction doable jobs will be put in max and min queue accordingly 
+ //but not doable jobs will be put in pending queue
+
+///whole implementation will be done in ElevatorController

@@ -1,0 +1,243 @@
+// first step is to do 
+// requirement analysis
+
+// Interface of app
+
+Match1 --------> Scorecard (this will get updated ball by ball)
+Match2
+Match3
+.
+.
+.
+.
+
+// this is how the scorecard will look to us(example)
+
+--------------------------------------------------
+team a        innings                 97-8(20 ov)
+--------------------------------------------------
+Batter                R  B  4's 6's SR
+ta_p1    b. tb_p7     11 7  1   0   110
+ta_p2    b. tb_p6
+ta_p3    not out
+ta_p4    not out
+         
+// similary the details will be for bowling side
+
+
+bowler      O  M  R  W  NB  WB  Eco
+------------------------------------
+tb_p4
+tb_p5
+tb_p6
+
+
+similary team b innings of batting 
+------------------------------------------------
+
+
+
+team a bowling 
+--------------------------------------------------
+
+
+
+rough flow ---
+                                        |-> 50 overs team a bat -> Player -> Maintain score details
+2 teams come -> Match start -> Inning 1---> 50 overs team b bowl
+                            -> Inning 2---> 50 overs team b bat
+                                        |-> 50 overs team a bowl
+
+
+
+object identification 
+
+1. Match
+2. team
+3. Players
+4. innings
+5. overs
+6. Ball
+7. Scorecard
+
+
+3. Lets try to make a relationship and UML class diagram
+
+
+
+We are going top down approach here
+
+Match{
+    Team A, has -a team
+    Team B,
+    Date date,
+    String venue,
+    Innings []innings;
+    MatchType type;
+    Team tossWinner;
+
+
+    startMatch();
+}
+
+Team {
+    String teamName;
+    Queue<Player> players;// as we give them numbering so thats why using Queue
+    List<Player> bench;//extra players
+    PlayerBattingController;// why using this ???????????
+    PlayerBowlingController;
+}
+
+Player {
+    Person person;//it has details etc has->a person
+    PlayerType playertype;
+    .
+    .
+    .
+    .
+    .
+    .
+    // as we maintain scorecard so each player can have two type of scorecard batting and bowling one
+    BattingScoreCard batScoreCard;
+    BowlingScoreCard bowlScoreCard;// now lets make that
+}
+
+Person{
+    String name;
+    int age;
+    Address address;
+}
+
+enum PlayerType{
+    Bowler,
+    Batsman,
+    WicketKeeper,
+    AllRounder,
+    Captain
+}
+
+BattingScoreCard{
+    int totalRuns;
+    int totalBallPlayed;
+    int total4's;
+    int total6's;
+    double strikeRate;// this is scalable
+}
+
+BowlingScoreCard{
+    int tot allOvers;
+    int runs;
+    int maidens;
+    int wickets;
+    double economy;
+    int noBalls;
+    int wides;
+    // scalable
+}
+
+// why PlayerBattingController and PlayerBowlingController are there in team ?????????
+
+// lets say when making decisions like who plays next or who bowls next or say who is on striker or who is non striker 
+// lets say we show which player is on strike or non strike we show a * in front of name so we need to maintain this info somewhere
+// there we use PlayerBattingController
+
+PlayerBattingController{
+    Queue<Player> yetToPlay;
+    //everytime a request comes that one is out so yettoplay will give the one and size will reduce
+    Player striker;
+    Player nonStriker;
+}
+
+//based on match type there are certain restriction on bowlers so we are maintaining this
+PlayerBowlingController{
+    Deque<Players> bowlers;//now lets say p1 is chosen as next bowler so i take it from front and if more overs are left i will put it at back 
+    Map<Player,Count> bowlerVsOverCount;// depend on the match type bowler will have its remaining overs
+    Player currentBowler;
+}
+
+// Match has-a match type also
+
+
+<<interface>>
+MatchType{
+    int numberOfOvers();
+    maxOversBowlerAllowed();
+}                |
+}                |               etc....
+}                |
+}                |
+}                |
+}                |
+}                |      
+ONeDAy          T20
+
+
+Innings{// match will throw the info from matchtype to innings that you have to run for how many overs
+    Team battingTeam;
+    Team bowlingTeam;
+
+    List<Over> overs; has-a over
+-------------------------------
+    startInning();
+}
+
+Over{
+    int overNumber;
+    List<Balls> balls;//can be wides also
+
+---------------------------
+    startOver();
+}
+
+Balls{
+    int ballNo.;
+    BallType bType;// enum NORMAL,NoBALL,WIdeBall
+    RunType rType;//enum ONE,TWO,THREE,FIVE,SIX
+    Player playedBy;
+    Player bowledBy;
+    List<SCOREUPDATEROBSERVER> list;//after every ball call notify method and give ball info to both the observers
+---------------------------
+    startBallDelivery();
+    //
+    notify();//this will invoke the SCOREUPDATEROBSERVER
+}
+
+
+// one important thing is still missing in this
+
+------------------------------------------------
+
+cricbuzz is a ball by ball status updater so how will you update scorecard with each and every ball ??
+
+
+// Observer design pattern fits here
+
+// 
+        SCOREUPDATEROBSERVER
+----------<<interface>>------------
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+
+BattingScoreCardUpdater         BowlingScoreCardUpdater // both will get a ball info 
+update(Ball){                         update(Ball){
+//with ball info
+// i can take out playedBy player    similary i can update the bowling player stats too
+// update that player accordingly
+}                                    }
+
+
+----------------------------------------------
+This part cricbuzz is totally done
+
+
+
+

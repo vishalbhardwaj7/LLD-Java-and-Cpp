@@ -1,0 +1,118 @@
+//first ask the clarity about how the machine will work
+//we will take a common machine here
+
+
+
+// Vending Machine Diagram
+
+P1(rs.180) P2(rs.150) P3(rs.160)   Insert Cash Here (_____________)
+P4         P5         P6           Insert Cash Button (.)
+P7         P8         P9           Select Product Button (.)
+P15        P14        P10          |  1    2    3   |
+P16        P13        P11          |  4    5    6   | <------ Select product with Id
+P18        P5         P12          |  7    8    9   |
+                                           0
+                                  Cancel Button to refund
+    Product Dispence Tray                 (.)
+    (___________________)        
+                                   Cash Change Tray
+                                   (_______________)
+ 
+
+//some machines will have only one type of product but some might have mix
+//product is placed on respective shelves its price is also mentioned there
+
+//we can confirm from interviewer if it is coin or Cash
+
+//flow
+
+1. Happy flow
+// machine is idle
+// user comes
+// he thinks of a product (lets say p4 (soda))
+
+//now user press insert cash Button
+
+//now machine start accepting the cash (state change now it is in hasMoney state)
+
+//now multiple coins insert can be inserted in this state
+
+//now user will say i have put the amount so now user will click on select product button(just as he clicks now it is in selectionState)
+
+//now enter the codde(he is chosing the product)
+
+//he can also go back from hasMoney to IdleState by pressing cancel/refund
+
+//before entering product code he can also cancel
+
+// lets say we put 7 rs and product is of more so also need to cancel refund automatically we again move to idle state
+
+// for happy case now dispense the product
+
+
+
+//                                              Flow chart of vending machine
+
+                                                       (cancel/refund)
+Idle State <-----------------------------------------------------------------------------------------------
+             (cancel/refund)                                                                              |
+Idle State <----------------------------------                                                            |
+                                             | (he can cancel)                                            | (insuff funds or again cancel button click)
+                                             |                                                            |
+          (Press Insert Cash Button)        (coins being inserted)   (select product button click)  (Product being chosen)              (It will dispense the product)
+Idle State ------------------------->       hasMoney State            -------------------------->   Selection State         --------->  Dispence Product State 
+                                                                                                                                                 |
+                                                                                                                                                 |
+Idle State <--------------------------------------------------------------------------------------------------------------------------------------
+
+
+// state wise operations are going on in my vending machine
+
+/State          Operations
+
+Idle    ---->  Press Insert Button only
+HasMoney --->  Insert Coin Button, Select Button, Cancel Button
+SelectTion ->  Chose the product, Cancel or refund, Return the change also
+state
+Dispence State (only product will be dispenser)
+
+//This we need to identify in interview then we will assume it to be state design question
+// Eg . Design TV 
+//     State operations
+/     on       select channel, audio etc
+/     off      on
+
+
+// What is state Design pattern ? full explanation
+
+// If i have a product then create a <<interface>> as state
+
+
+
+
+Product                          <<interface>>(State interface)
+(has-a state)
+                               State1 State2 State3(all are is-a of state interface ) (all are concrete classes)
+                                O1     O2,O3  O4 (default implement for other operations)          
+
+// If state1 has only one operation then it will only implement that operation it will do some default things like exceptions for the other operations
+
+// in each state i will be having a product so i will do the operation and change the product's state as i will be having product object in scope
+
+
+
+//  UML for vending machine
+
+// I know it is a state lld and i know the operations
+
+// 1. Make state interface
+<<state>>
+PressInsertCashButton(vendingMachine)
+InsertCoin;
+SelectProductButton(vendingMachine)
+chooseProduct(vendingMachine)
+
+
+// Vending Machine class
+
+

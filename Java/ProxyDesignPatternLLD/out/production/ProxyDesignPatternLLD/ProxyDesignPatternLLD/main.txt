@@ -1,0 +1,41 @@
+//If a client request a real object, there is proxy object between these two
+//this is the proxy design pattern
+//where it is used ?
+//All websites are visited through proxy (College)
+//Proxy has blocked servers also to check if to reject request
+//Caching.....(Proxy checks if data is already cached then data is sent by proxy)
+//Pre processing of data  
+//Client -> Proxy                          -> RO
+//          Logging
+//          Publish Event(Post processing)
+//          Centralised Logging
+//          Beam Creation in Spring Bootx
+
+//working
+
+//                EMPLOYEE TABLE(<<interface>>)
+//               methods
+// -------------------------------
+//                create
+//                delete
+//                get
+
+// EmployeeTableImpl{ is-a EMPLOYEETable
+    create(){
+        --------create method implemented
+    }
+}//concrete class
+
+//EmployeeTableProxy{ is-a EmployeeTable 
+    create, delete, get has-a-> EmployeeTableImpl
+}
+
+//when a client calls employee table to create something
+//request will go to proxy first then it can select various things to do (access restriction, caching, logging, pre processing, post processing)
+// after that it will call the impl object to do actual work
+
+//i can have many proxiessss
+
+client -> proxy A -> proxy B -> proxy C -> Real Object
+
+//marshelling and unmashelling(proxyies can add more ojects to further proxies)

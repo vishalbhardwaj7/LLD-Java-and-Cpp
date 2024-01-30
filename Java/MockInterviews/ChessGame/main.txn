@@ -1,0 +1,140 @@
+// what is dry principle ? 
+// dont repeat yourself
+
+// what is yagni principle
+// if you dont gonna use it dont implement it. Always think from that perspective(you are not gonna need it)
+
+// what is kiss principle 
+// keep it simple and stupid. it means dont complicate it rather divide it in functions.
+
+// what is L in solid
+// L is liskov subsition principle. If two concrete classes implement a same interface then both of them should be interchangable
+
+// What is D in solid(
+// D is dependency inversion. (This is dependency injection -> Java springboot is based on this. We dont initialize object in methods rather pass them in constructors
+// dependency inversion means never make object of a concrete class but of a interface in your parent class.
+
+// What is I in solid ?
+// I is interface Saggregation - Eg -> We have a Duck class. There are two types of ducks. All the methods need to be implemented in the both ducs but rubber duck cant fly so we need to throw an exception from there. So we can make one interface and then split it out using two interfaces. In this was we can make a duck flyable and not flyable
+
+// Now question starts ? 
+
+// Q -> Design a chess game ? Now its all about you
+// M means I am asking
+// Y means interviewer is asking 
+// MA means my answer
+// YA means interviewer answer
+
+M -> Lets try to identify the objects. There is one board and there are players. 2 players.
+//   If i try to highlight the board. On the board there are squares. We can keep it simple so we can make 8*8 matrix also or a1 b1 also
+//  There gonna be pieces. 
+// list
+
+// 1. Boards 8*8
+// 2. Players (White and Black)
+// 3. Game -> Rules
+// 4. K,Q, (Rooke, Bishop, Knight)*2
+// 5. Every piece will move in special way
+// Either player can simply move , move and kill, 
+
+
+List of objects. 
+Board, Player, Piece, Cells, Game
+// Move is a behaviour of a piece
+
+// Lets try to draw a UML diagram ..
+
+
+
+// Y -> Please make a flow first
+
+// In board we have cell and cells have position of themselves.
+// A cell has info what piece it has.
+
+
+// Board {
+    <<cell matrix>> has->a cell
+
+}
+
+
+cell{
+    has->a piece
+    int x,y; cell info
+}
+
+     colour()
+    type()
+
+    move()abstract method
+}
+
+class pawn{ is->a piece
+    move() // each type will implement their own move method now
+}
+
+
+class Game{
+    // turn can be of type black or White
+    // it has a board
+    // player 1, player 2 has -a
+    // status of game ..
+}
+
+class player{
+    name, rank, colour  
+}
+
+
+// coding part
+
+class Board{
+    Cells[][]=new Cell[][];//2d array
+
+    //initialize method
+    public initialize(){
+        k=8;
+        whhile(k--){
+            Piece p = new Pawn("black");
+            Cell cell=new Cell(1,k,p);
+
+        }
+        k=8;
+        while k--
+            Piece p = new Pawn("white");
+        }
+    }
+}
+
+abstract class Piece{
+    String color;
+
+    public abstract isMoveValid(Cell start, Cell end);
+}
+
+class Pawn extends Piece{
+    public Pawn(color){
+        super.color = colour;
+    }
+    public boolean isMoveValid(Cell start, Cell end, Board board){
+        implement the rule
+    }
+}
+
+class Cell{
+    private Piece piece;
+    int x,y;
+
+    Cell(int x,int y, Piece p){
+        //assignment
+    }
+}
+
+
+// interviewer 
+
+// requirement analysis
+// visualization first of objects
+// try to find out the flow first has-a is-a
+// uml diagram
+// engage the interviewer
