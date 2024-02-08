@@ -106,7 +106,7 @@ class TicTacToeGame{
                 players.addFirst(playerTurn);//insert him again at first
                 continue;//run loop again
             }
-            player.addLast(playerTurn);
+            player.addLast(playerTurn); // add at the back
 
             bool winner = isThereWinner(row,col,playerTurn.PlayingPiece.pieceType);
             if(winner)return playerTurn.name;
