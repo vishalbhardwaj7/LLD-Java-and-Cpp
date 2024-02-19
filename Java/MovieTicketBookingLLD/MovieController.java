@@ -25,7 +25,7 @@ public class MovieController {
         cityVsMovies.put(city,movies);
     }
 
-    Movie getMovieByName(String movieName){
+    Movie getMovieByName(String movieName){// can use strategy here....
         for(Movie movie: allMovies){
             if(movie.getMovieName().equals(movieName)){
                 return movie;
