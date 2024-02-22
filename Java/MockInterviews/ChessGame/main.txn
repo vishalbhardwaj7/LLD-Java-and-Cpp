@@ -62,10 +62,9 @@ cell{
     has->a piece
     int x,y; cell info
 }
-
-     colour()
+class piece{
+    colour()
     type()
-
     move()abstract method
 }
 
