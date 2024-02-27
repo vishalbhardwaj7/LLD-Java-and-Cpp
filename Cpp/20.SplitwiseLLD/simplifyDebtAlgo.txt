@@ -1,0 +1,143 @@
+
+Q2 // Splitwise Simplify Debt Algorithm 
+    // First watch the first part please 
+
+// This has been recently asked in a top product company 
+// both lld and dsa perspective
+
+// Lets say there are three persons living in an apartment
+
+// Lets see there are arrays given
+ [from, to, amount]
+ [A,B, 5]
+ [B,C, 5]
+ [C,A, 10]
+ [A,C, 1]
+
+// main purpose of the splitwise Simplify is to reduce the number of transactions always 
+// But after the simplification the amount they owe or receive should not differ
+
+// Graph of above data 
+
+    1
+  ---->
+   10
+ A<---C
+ |    ^
+ |    |5
+ |    |
+ 5--->B
+
+
+//Now just from a human perspective we can say B has to take from A and then give to C. So we cut B out and ask A to give directly to C 
+// Now our graph looks like this
+        1
+A ----------------> C
+       10
+  <----------------
+        5
+  ---------------->
+   
+// now lets plus minus and only c has to give 4 rs
+
+          4
+// A <------------- c
+
+
+//But how will the splitwise do it internally ????
+
+// splitwise will compute in-out of each node
+// for a -> 10-(5+1) = 4 so it means A needs 4
+
+// for b -> 5-5 = 0 so no need
+// for c -> (1+5)-10 = -4 so it needs to give the money
+
+
+// now what do we notice from all this 
+
+// 1. so the amount of all the values will be equal to 0 (bcs system is not creating any new money)
+
+// 2. those who are 0 are not contributing  so not required so members with 0 are not required
+
+// 3. If we just know in-out of all nodes, we dont even need to remember the graph itself
+
+receivers | giver
+a 70       |C -200
+b 300      |d -40
+           |e -100           sum of all should be 0 always
+           |f -30
+
+
+        
+now have a balance list
+[70,-200,300,-40,-100,-30]
+
+// one more thing. split wise says lets not give any partial amounts because that will just increase the number
+// of transactions rather just give full amount always
+// give full -200 to 70 so it becomes -130 now it has to pay 130 so it becomes a giver so on ....
+// so basically giver after giving money will become 0 always but to whomever it gives money its balance will change i.e it can  become a giver or remain a receiver
+
+// after the balance list it becomes a dfs problem
+
+// now lets iterate from 70 and give to -200 so it becomes -130 and -200 becomes 0
+// or there can be other possibilities too so what if 70 is paid by -40
+// so basically any time a transaction happen, you need to make one 0 and others will change accordingly
+
+// so basically it is a recursion so wherever the transaction count is less we will pick that particular path 
+
+// this is a np hard problem 
+
+// what is input 
+// we will be given an array of transactions [][] like aboe [a,b,amonut]
+// so then, what we would need to do is coding part
+
+
+public int dfs(vector<int> &balances,int currentIdx){
+    if(balances.size()==0 || currentIdx>=balances.size())return 0;
+    int currentVal = balances[currentIdx];
+
+    int minTransactionCount=1e9;
+
+    //i need to find a opposite sign number from idx+1
+
+    for(int i=currentIdx+1;i<balances.soze();i++){
+        int nextVal=balances[i];
+        //transaction can only happen if the sign is a opposite one right
+        if(currentVal*nextVal < 0){//transaction can happen between these
+            balance[i]=currentVal+nextVal;//just add the cur bal into it so it changes
+            minTransactionCount = min(minTransactionCount,1+dfs(balances,currentIdx+1));
+            balance[i]=nextVal;//set again
+            //if i get a perfect match lets say 40 for a -40 so no need to go ahead just use that
+            if(currentVal+nextVal==0){
+                break;
+            }
+        }
+    }
+
+    return minTransactionCount;
+}
+
+void main(int [][] transactions){
+    //compute the overall balance (incoming-outgoing) for each members
+    unordered_map<int,int> membersVsBalanceMap;
+    for(auto vec:transactions){
+        int from=txn[0];
+        int to=txn[1];
+        int amount=txn[2];
+        membersVsBalanceMap[from]-=amount;
+        membersVsBalanceMap[to]+=amount;
+    }
+
+    //put into a balance list
+    vector<int> balance;
+    for(auto it:membersVsBalanceMap){
+        if(it.second!=0)balance.push_back(it.second);
+    }
+
+    //now write our dfs code bro
+
+}
+
+T.C -> O(n!)
+
+// can be better with dp

@@ -153,7 +153,8 @@ class Balance{
 }
 
 // how will you update this balance sheet ? 
-// as soon as we create an expense, it should be able to update this balance sheet right ?
+// as soon as we create an expense, it should be able to update this balance sheet right ? 
+// observer design pattern 
 
 // ExpenseController controller should take the responsibility that as soon as it creates the expense
 // it will update the balance sheet of the users
@@ -238,10 +239,11 @@ A ----------------> C
 // 3. If we just know in-out of all nodes, we dont even need to remember the graph itself
 
 receivers | giver
- 70       | -200
- 300      | -40
-          | -100           sum of all should be 0 always
-          | -30
+a 70       |C -200
+b 300      |d -40
+           |e -100           sum of all should be 0 always
+           |f -30
+
 
         
 now have a balance list
