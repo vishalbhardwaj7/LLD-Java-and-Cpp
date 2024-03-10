@@ -126,8 +126,3 @@ int main(){
 // chat gpt rocks
 
 // In summary, the order in which you define these two functions doesn't matter in this particular case, as C++ allows member function definitions outside of the class as long as they are provided after the full class definition.
-
-
-
-
-
