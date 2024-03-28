@@ -183,13 +183,13 @@ Innings{// match will throw the info from matchtype to innings that you have to 
 
 Over{
     int overNumber;
-    List<Balls> balls;//can be wides also
+    List<Ball> balls;//can be wides also
 
 ---------------------------
     startOver();
 }
 
-Balls{
+Ball{
     int ballNo.;
     BallType bType;// enum NORMAL,NoBALL,WIdeBall
     RunType rType;//enum ONE,TWO,THREE,FIVE,SIX
